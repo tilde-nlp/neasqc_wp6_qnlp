@@ -51,13 +51,6 @@ Examples:
 
 `python ../../models/classical/NNClassifier.py -i ../datasets/reviews_BERT_CASED.json -f "class" -t "sentence"`
 
-### Results
-
-|                                                                        | BERT sentence emb.: *cased_L-12_H-768_A-12*<br>NN model type: Shallow feedforward neural network | BERT sentence emb.: *uncased_L-12_H-768_A-12*<br>NN model type: Shallow feedforward neural network | fastText word emb.: *wiki.en.bin*|<br>NN model type: Convolutional network   with max sentence length 6                           |
-|------------------------------------------------------------------------|-----------------------------------------------------|-----------------------------------------------------|-------------------------------------------------------------------|
-| review.tsv<br>(train: 53329, test: 5926)<br>8 classes                     | Train accuracy:   0.6702<br>Test accuracy: 0.6627 | Train accuracy: 0.6767<br>Test accuracy: 0.6591 | Train accuracy: 0.7717<br>Test accuracy: 0.6628 |
-| labelled_newscatcher_dataset.tsv<br>(train: 2317, test: 258)<br>5 classes | Train accuracy:   0.8934<br>Test accuracy: 0.5233 | Train accuracy: 0.9413<br>Test accuracy: 0.6240 | Train accuracy: 0.9965<br>Test accuracy: 0.6008 |
-
 ### New Results
 
 |                                                                                                                    | review.tsv<br>(train: 53329, test: 5926)<br>8 classes | labelled_newscatcher_dataset.tsv<br>(train: 2317, test: 258)<br>5 classes |
