@@ -1,5 +1,6 @@
 import sys
 import json
+import os
 from keras.utils import pad_sequences
 import numpy as np
 import fasttext
@@ -16,7 +17,7 @@ class Embeddings:
         try:
             if (embtype=='fasttext'):
                 if not os.path.exists(path):
-                    fasttext.util.download_model('en', if_exists='ignore')              
+                    fasttext.util.download_model('en', if_exists='ignore')     
                 self.model = fasttext.load_model(path)
             elif (embtype == 'bert'):
                 self.model=BertModel.from_pretrained(path, output_hidden_states = True, )
