@@ -41,7 +41,7 @@ Files with syntactic tags `withtags_Reviews.tsv`, `withtags_labelled_newscatcher
 		- *-o* or *--outfile* \<Filtered 2-column file\>
 		- *-f* or *--filterfile* \<File containing list of preferable syntactical tags\> 
 		
-Allready filtered data `reviews.tsv`, `labelled_newscatcher_dataset.tsv`, `RAW_interactions.tsv` and `withtags_amazonreview_train.tsv` are included in *../datasets* folder. These files contain text examples that parse as sentences.
+Allready filtered data `reviews.tsv`, `labelled_newscatcher_dataset.tsv`, `RAW_interactions.tsv` and `amazonreview_train.tsv` are included in *../datasets* folder. These files contain text examples that parse as sentences.
 
 3. Split data in train/test parts and obtain embeddings using sentence transformer and BERT sentence-level embeddings and fastText word-level embeddings.
 
