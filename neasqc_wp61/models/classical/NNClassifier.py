@@ -4,7 +4,7 @@ import json
 import datetime
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras.models import Sequential, Model
+from tensorflow.keras.models import Sequential, Model, load_model
 from tensorflow.keras.layers import (Input, Dense, Activation, Conv1D,
                           Dropout, MaxPooling1D, Flatten)
 from tensorflow.keras.optimizers import Adam
@@ -107,15 +107,15 @@ class NNClassifier:
         topPrediction = np.argmax(res, axis=1)
         return topPrediction
 
-    def save(folder):
+    def save(self, folder):
         """Saves model."""
         self.model.save(folder)
         return 
 
-    def load(folder):
+    def load(self, folder):
         """Loads model."""
         try:
-            self.model = keras.models.load_model(folder)
+            self.model = load_model(folder)
         except:
             print(f"Failed to load model from {folder}")
             return False
@@ -183,20 +183,6 @@ def prepareTrainTestXYWords(data, maxLen, classify_by_field="truth_value"):
 def evaluate(predictions, testY):
     """Evaluates the accuracy of the predictions."""
     return np.sum(predictions == np.argmax(testY, axis=1))/len(testY)
-
-    def save(folder):
-        """Saves model."""
-        self.model.save(folder)
-        return 
-
-    def load(folder):
-        """Loads model."""
-        try:
-            self.model = keras.models.load_model(folder)
-        except:
-            print(f"Failed to load model from {folder}")
-            return False
-        return True
 
 def main():
 

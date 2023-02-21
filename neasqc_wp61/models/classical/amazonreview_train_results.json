@@ -1,0 +1,26 @@
+{
+ "train_accuracy": [
+  0.9067084193229675,
+  1.0,
+  0.7823812961578369,
+  0.8116225600242615,
+  0.825878918170929,
+  0.8403418660163879
+ ],
+ "test_accuracy": [
+  0.8319632021922099,
+  0.7376688197298884,
+  0.7851830103738501,
+  0.8138578978273635,
+  0.8256508122920336,
+  0.836318261890781
+ ],
+ "model type": [
+  "fastText CNN",
+  "BERT_CASED nearest neighbors",
+  "BERT_CASED NN",
+  "BERT_UNCASED NN",
+  "all-distilroberta NN",
+  "all-mpnet-base NN"
+ ]
+}
