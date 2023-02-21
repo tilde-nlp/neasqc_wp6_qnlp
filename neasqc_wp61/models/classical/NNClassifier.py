@@ -9,7 +9,8 @@ from tensorflow.keras.layers import (Input, Dense, Activation, Conv1D,
                           Dropout, MaxPooling1D, Flatten)
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras import regularizers
-
+from sklearn.preprocessing import LabelEncoder
+import argparse
 
 def ts():
     return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
@@ -37,7 +38,7 @@ class NNClassifier:
         if "model" in kwargs and kwargs["model"] == "CNN": #defaults for CNN
             self.params["epochs"] = 30
             self.params["filterCounts"] = [300, 300]
-            self.params["maxSentenceLen"] = 5
+            self.params["maxSentenceLen"] = 6
             self.params["dropout"] = 0.5
 
         self.params.update(kwargs)
@@ -87,6 +88,7 @@ class NNClassifier:
         @param trainY: training targets (labels)
         @return: training history data as returned by Keras
         '''
+        self.params["nClasses"] = len(trainY[0])
         if self.params["model"] == "CNN":
             self.model = NNClassifier.createModelCNN(**self.params)
         elif self.params["model"] == "FFNN":
@@ -105,13 +107,26 @@ class NNClassifier:
         topPrediction = np.argmax(res, axis=1)
         return topPrediction
 
+    def save(folder):
+        """Saves model."""
+        self.model.save(folder)
+        return 
 
+    def load(folder):
+        """Loads model."""
+        try:
+            self.model = keras.models.load_model(folder)
+        except:
+            print(f"Failed to load model from {folder}")
+            return False
+        return True
+        
 def loadData(file):
     with open(file, "r", encoding="utf-8") as f:
         data = json.load(f)
     return data
 
-def prepareTrainTestXYSentence(data):
+def prepareTrainTestXYSentence(data, classify_by_field="truth_value"):
     '''Prepares the data as numpy arrays suitable for training.
     @param data: the data to process
     @return: four numpy arrays corresponding to training and test input data and labels
@@ -123,9 +138,10 @@ def prepareTrainTestXYSentence(data):
         arrY = []
         for ex in data[dd]:
             arrX.append(ex["sentence_vectorized"][0])
-            arrY.append(ex["truth_value"])
+            arrY.append(ex[classify_by_field])
         X = np.array(arrX)
-        Y = tf.keras.utils.to_categorical(arrY, 2)
+        labelencoder = LabelEncoder()
+        Y = tf.keras.utils.to_categorical(labelencoder.fit_transform(arrY), None)
         dX.append(X)
         dY.append(Y)
     return dX[0], dY[0], dX[1], dY[1]
@@ -136,7 +152,7 @@ def appendZeroVector(x, N, dim):
     return x + [[0] * dim] * (N - len(x))
 
 
-def prepareTrainTestXYWords(data, maxLen):
+def prepareTrainTestXYWords(data, maxLen, classify_by_field="truth_value"):
     '''Prepares the data as numpy arrays suitable for training.
     @param data: the data to process
     @param maxLen: maximum sentence length. Longer sentences are truncated,
@@ -154,10 +170,12 @@ def prepareTrainTestXYWords(data, maxLen):
                 sentenceVectors.append(w["vector"])
                 dim = len(w["vector"])
             arrX.append(sentenceVectors)
-            arrY.append(ex["truth_value"])
+            arrY.append(ex[classify_by_field])
         arrX = [appendZeroVector(sv, maxLen, dim) for sv in arrX]
         X = np.array(arrX)
-        Y = tf.keras.utils.to_categorical(arrY, 2)
+        labelencoder = LabelEncoder()
+        Y = tf.keras.utils.to_categorical(labelencoder.fit_transform(arrY), None)
+        #Y = tf.keras.utils.to_categorical(arrY, None)
         dX.append(X)
         dY.append(Y)
     return dX[0], dY[0], dX[1], dY[1]
@@ -166,18 +184,42 @@ def evaluate(predictions, testY):
     """Evaluates the accuracy of the predictions."""
     return np.sum(predictions == np.argmax(testY, axis=1))/len(testY)
 
+    def save(folder):
+        """Saves model."""
+        self.model.save(folder)
+        return 
+
+    def load(folder):
+        """Loads model."""
+        try:
+            self.model = keras.models.load_model(folder)
+        except:
+            print(f"Failed to load model from {folder}")
+            return False
+        return True
+
 def main():
 
-
-    classifier = NNClassifier()
-    data = loadData("dataset_vectorized_bert_cased.json")
-    #data = loadData("dataset_vectorized_fasttext.json")
-    #trainX, trainY, testX, testY = prepareTrainTestXYSentence(data)
-
-    maxLen = 5
-    trainX, trainY, testX, testY = prepareTrainTestXYWords(data, maxLen)
-
-    classifier.train(trainX, trainY)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-i", "--input", help = "Json data file for classifier training (with embeddings)")
+    parser.add_argument("-f", "--field", help = "Classify by field")
+    parser.add_argument("-t", "--type", help = "Embedding type: sentence or word")
+    args = parser.parse_args()
+    print(args)
+    data = loadData(args.input)
+	
+    if args.type == "word":
+        classifier = NNClassifier(model='CNN',vectorSpaceSize=300)
+        maxLen = 6
+        trainX, trainY, testX, testY = prepareTrainTestXYWords(data, maxLen, args.field)
+    elif args.type == "sentence":
+        classifier = NNClassifier()
+        trainX, trainY, testX, testY = prepareTrainTestXYSentence(data, args.field)
+    else:
+        print("Invalid embedding type. it must be 'word' or 'sentence'.")
+        sys.exit(0)
+	
+    history = classifier.train(trainX, trainY)
 
     res = classifier.predict(testX)
     score = evaluate(res, testY)
@@ -186,8 +228,8 @@ def main():
     resFileName = datetime.datetime.now().strftime('results_%Y-%m-%d_%H-%M-%S.json')
     with open(resFileName , "w", encoding="utf-8") as f:
         json.dump({
-            "res": res.tolist(),
-            "score": score,
+            "train accuracy": str(history.history['accuracy'][-1]),
+            "test accuracy": str(score),
         }, f, indent=2)
 
 
