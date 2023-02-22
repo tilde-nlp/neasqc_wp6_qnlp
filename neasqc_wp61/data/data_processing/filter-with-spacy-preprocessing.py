@@ -14,6 +14,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--infile", help = "Comma separated CSV data file")
     parser.add_argument("-o", "--outfile", help = "Result file")
+    parser.add_argument("-d", "--delimiter", default=',', help = "Field delimiter symbol")
     parser.add_argument("-c", "--classfield", required=False, help = "Name of class field")
     parser.add_argument("-t", "--txtfield", required=False, help = "Name of text field")
     parser.add_argument("-f", "--firstsentence", action='store_true', required=False, help = "Take the first sentence if the text is longer that 6 tokens")   
@@ -29,9 +30,9 @@ def main():
     print(classfield+' and '+txtfield)
     with open(args.infile, encoding="utf8", newline='') as csvfile, open(args.outfile, "w", encoding="utf8") as tsvfile:
         if args.classfield != None: 
-            news_reader = csv.DictReader(csvfile, delimiter=',', quotechar='"')
+            news_reader = csv.DictReader(csvfile, delimiter=args.delimiter, quotechar='"')
         else:
-            news_reader = csv.DictReader(csvfile, delimiter=',', fieldnames = [classfield, txtfield], quotechar='"')        
+            news_reader = csv.DictReader(csvfile, delimiter=args.delimiter, fieldnames = [classfield, txtfield], quotechar='"')        
         processed_summaries = set()
         norm_process_params = ["perl", "./scripts/normalize-punctuation.perl","-b","-l", "en"]
         norm_process = subprocess.Popen(norm_process_params, stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)

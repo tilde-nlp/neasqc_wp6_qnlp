@@ -28,6 +28,7 @@ It can be done either using Jupyter notebook `Prepare_datasets_4classifier.ipynb
 	
 		- *-i* or *--infile* \<Comma separated CSV data file\>
 		- *-o* or *--outfile* \<TAB separated 3-column file\>  (syntactic tags in the 3rd column)
+		- *-d* or *--delimiter* \<Field delimiter symbol\>
 		- *-c* or *--classfield* \<Name of the field containing class\>  (this parameter should be skipped if the first line of the file does not contain column names)	
 		- *-t* or *--txtfield* \<Name of the field containing text\>  (this parameter should be skipped if the first line of the file does not contain column names)	
 	
@@ -41,7 +42,7 @@ Files with syntactic tags `withtags_Reviews.tsv`, `withtags_labelled_newscatcher
 		- *-o* or *--outfile* \<Filtered 2-column file\>
 		- *-f* or *--filterfile* \<File containing list of preferable syntactical tags\> 
 		
-Allready filtered data `reviews.tsv`, `labelled_newscatcher_dataset.tsv`, `RAW_interactions.tsv` and `amazonreview_train.tsv` are included in *../datasets* folder. These files contain text examples that parse as sentences.
+Allready filtered data `reviews.tsv`, `labelled_newscatcher_dataset.tsv`, `RAW_interactions.tsv` and `amazonreview_train.tsv` are included in *../datasets* folder. These files contain text examples that parse patterns in text file *../datasets/tags.txt*.
 
 3. Split data in train/test parts and obtain embeddings using sentence transformer and BERT sentence-level embeddings and fastText word-level embeddings.
 
@@ -60,12 +61,10 @@ Examples:
 
 ### New Results
 
-|                                                                                                                    | review.tsv<br>(train: 53329, test: 5926)<br>8 classes | labelled_newscatcher_dataset.tsv<br>(train: 2317, test: 258)<br>5 classes | RAW_interactions.tsv<br>(train: 3319, test: 369)<br>5 classes |
-|--------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------|---------------------------------------------------------------------------|---------------------------------------------------------------|
-| fastText word emb.: *cc.en.300.bin*<br>NN model type: Convolutional network (max sentence length 6)                | Train accuracy: 0.7811<br>Test accuracy: 0.6718       | Train accuracy: 0.9914<br>Test accuracy: 0.7054                           | Train accuracy: 0.9259<br>Test accuracy: 0.813                |
-| Transformer sentence emb.: *paraphrase-xlm-r-multilingual-v1*<br>NN model type: Shallow feedforward neural network | Train accuracy: 0.6784<br>Test accuracy: 0.6674       | Train accuracy: 0.9033<br>Test accuracy: 0.6318                           |                                                               |
-| Transformer sentence emb.: *LaBSE*<br>NN model type: Shallow feedforward neural network                            | Train accuracy: 0.6736<br>Test accuracy: 0.6687       | Train accuracy: 0.7613<br>Test accuracy:  0.6783                          |                                                               |
-| Transformer sentence emb.: *all-mpnet-base-v2*<br>NN model type: Shallow feedforward neural network                | Train accuracy: 0.6934<br>Test accuracy: 0.6846       | Train accuracy: 0.8261<br>Test accuracy: 0.6977                           | Train accuracy: 0.8741<br>Test accuracy: 0.8184               |
-| Transformer sentence emb.: *all-distilroberta-v1*<br>NN model type: Shallow feedforward neural network             | Train accuracy: 0.6835<br>Test accuracy: 0.6698       | Train accuracy: 0.8187<br>Test accuracy: 0.7364                           | Train accuracy: 0.8729<br>Test accuracy: 0.8265               |
-| BERT word emb.: *bert-base-uncased*<br>NN model type: Shallow feedforward neural network                           | Train accuracy: 0.6733<br>Test accuracy: 0.6497       | Train accuracy: 0.90007<br>Test accuracy: 0.6357                          | Train accuracy: 0.884<br>Test accuracy: 0.7832                |
-| BERT word emb.: *bert-base-cased*<br>NN model type: Shallow feedforward neural network                             | Train accuracy: 0.6609<br>Test accuracy: 0.6429       | Train accuracy: 0.8377<br>Test accuracy: 0.5814                           | Train accuracy: 0.8843<br>Test accuracy: 0.8347               |
+|                                                                                                                    | review.tsv<br>(train: 27001, test: 3001)<br>5 classes | labelled_newscatcher_dataset.tsv<br>(train: 160, test: 18)<br>8 classes | amazonreview_train.tsv<br>(train: 183918, test: 20436)<br>2 classes |
+|--------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------|-------------------------------------------------------------------------|---------------------------------------------------------------------|
+| fastText word emb.: *cc.en.300.bin*<br>NN model type: Convolutional network (max sentence length 6)                | Train accuracy: 0.9937<br>Test accuracy: 0.6666       | Train accuracy: 0.9914<br>Test accuracy: 0.7054                         | Train accuracy: 0.9067<br>Test accuracy: 0.8319                     |
+| Transformer sentence emb.: *all-mpnet-base-v2*<br>NN model type: Shallow feedforward neural network                | Train accuracy: 0.9125<br>Test accuracy: 0.7777       | Train accuracy: 0.8261<br>Test accuracy: 0.6977                         | Train accuracy: 0.8403<br>Test accuracy: 0.8363                     |
+| Transformer sentence emb.: *all-distilroberta-v1*<br>NN model type: Shallow feedforward neural network             | Train accuracy: 0.9250<br>Test accuracy: 0.6666       | Train accuracy: 0.8187<br>Test accuracy: 0.7364                         | Train accuracy: 0.8258<br>Test accuracy: 0.8256                     |
+| BERT word emb.: *bert-base-uncased*<br>NN model type: Shallow feedforward neural network                           | Train accuracy: 1.0000<br>Test accuracy: 0.6111       | Train accuracy: 0.90007<br>Test accuracy: 0.6357                        | Train accuracy: 0.8116<br>Test accuracy: 0.8138                     |
+| BERT word emb.: *bert-base-cased*<br>NN model type: Shallow feedforward neural network                             | Train accuracy: 1.0000<br>Test accuracy: 0.6111       | Train accuracy: 0.8377<br>Test accuracy: 0.5814                         | Train accuracy: 0.7823<br>Test accuracy: 0.7851                     |

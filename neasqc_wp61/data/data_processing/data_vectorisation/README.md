@@ -15,8 +15,9 @@ Some Python libraries must be installed for vectorization.
 
 - Python BERT transformer library can be installed with command `pip install -U transformers`
 
+Use of vectorizing services using Python class *Embeddings* is demonstrated in Jupyter notebook *../../doc/tutorials/Prepare_datasets_4classifier.ipynb*
 
-BERT models ca also be employed as the vectorizing services. They are built as a `Docker` containers and instructions for building the images are contained in the `Dockerfile`.
+BERT models can also be employed as the vectorizing services. They are built as a `Docker` containers and instructions for building the images are contained in the `Dockerfile`.
 
 - Download and start *Docker Desktop*
 
@@ -40,3 +41,4 @@ Script *GenerateEmbeddings.py* allows to use models of all types. You have to sp
 `python ./GenerateEmbeddings.py -i ../../datasets/reviews_traintest.json -o ../../datasets/reviews_BERT_UNCASED.json -t "bert" -m "bert-base-uncased"`
 
 `python ./GenerateEmbeddings.py -i ../../datasets/reviews_traintest.json -o ../../datasets/reviews_all-distilroberta.json -t "transformer" -m "all-distilroberta-v1"`
+
