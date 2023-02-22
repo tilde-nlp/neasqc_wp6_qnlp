@@ -1,0 +1,971 @@
+{
+ "train_data": [
+  {
+   "sentence": "Excellent Hearty Beefy",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "5 stars for the idea",
+   "class": "5",
+   "tag": "n[n[n[(n/n)   n]] (n\\\\n)[((n\\\\n)/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "good stuff dee",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Killer tasty soup",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "a delicious cabbage soup",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "a good one",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Absolutely the best",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "My two cents",
+   "class": "3",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Very good recipe",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "really good stuff",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "very fresh zwt9",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "  Used packaged itilian seasonings",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "good family meal",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Great Great Great Cake",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "very good thanx",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "good side dish",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "terrible eggy bready mixture",
+   "class": "1",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "great meal plan",
+   "class": "3",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "fast tasty sweet",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "definitely a favorite",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Great Traditional recipe",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "its hot leterly",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "nice healthy light soup",
+   "class": "4",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "very good recipe.thanks",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "Great recipe thanks",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "A fair couscous dish",
+   "class": "2",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "Great ingredient combination",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Really wonderful tea",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "not my thing",
+   "class": "1",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "excellent nutty treat",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "A new family favorite",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "great meal for special occasions",
+   "class": "5",
+   "tag": "n[n[n[(n/n)   n]] (n\\\\n)[((n\\\\n)/n)   n[n[(n/n)   n]]]]"
+  },
+  {
+   "sentence": "Very ncie recipe",
+   "class": "4",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "This absolutely fabulous",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "A a a",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Really nice combination",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "Great Cake Thanks",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Really Good Tea",
+   "class": "4",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "Not a good receipe",
+   "class": "1",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "Yummy yummy yummy",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Great tasting bread",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Great finger food",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "perfect addition to pasta night",
+   "class": "5",
+   "tag": "n[n[n[(n/n)   n]] (n\\\\n)[((n\\\\n)/n)   n[n[(n/n)   n]]]]"
+  },
+  {
+   "sentence": "really good coleslaw",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "good idea jellyqueen",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "real good dish",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "very good soup",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "Ooey gooey delicious",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Just plain yum",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Best use of leftover steak",
+   "class": "5",
+   "tag": "n[n[n[(n/n)   n]] (n\\\\n)[((n\\\\n)/n)   n[n[(n/n)   n]]]]"
+  },
+  {
+   "sentence": "Awesome recipe- delicious donuts",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "YUMM another winner",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Delicious healthy breakfast",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Tasty easy recipe",
+   "class": "4",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Nice light tasting coleslaw",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "awesome awesome awesome",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "good contenintal bread recipe",
+   "class": "2",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "great stuff kitten.dee",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "good solid recipe",
+   "class": "4",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Outstandingly delicious idea",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "a great dish",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Creative & lt;br/&gt;www.botagaz.com",
+   "class": "3",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "good easy zwt9",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "nice side dish",
+   "class": "4",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Very nice flavour",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "Nice rich sauce",
+   "class": "4",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "great turkey burgers",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "very good thanks",
+   "class": "4",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "smooth cherry bombers",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "very nice recipe",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "Cool man cool",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "excellent recipe thanks",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "great old fashioned cookie",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "Outstanding pork loin recipe",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "great combo of fresh ingredients",
+   "class": "5",
+   "tag": "n[n[n[(n/n)   n]] (n\\\\n)[((n\\\\n)/n)   n[n[(n/n)   n]]]]"
+  },
+  {
+   "sentence": "nice lasagna sauce",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Great Taste Treat",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "absolutly sickening yuck",
+   "class": "1",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "good simple spicy zwt9",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "Nice easy tasty soup",
+   "class": "4",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "yummy yummy pie",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Good pasta dish",
+   "class": "3",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Simple & Scrumptious",
+   "class": "4",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Excellent banana bread",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "great chicken recipe",
+   "class": "3",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Excellent five star quality",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "very tasty recipe",
+   "class": "3",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "very good meatballs",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "Nice alternative to oatmeal raisin",
+   "class": "3",
+   "tag": "n[n[n[(n/n)   n]] (n\\\\n)[((n\\\\n)/n)   n[n[(n/n)   n]]]]"
+  },
+  {
+   "sentence": "amazing persian food",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Epic fail with my family",
+   "class": "1",
+   "tag": "n[n[n[(n/n)   n]] (n\\\\n)[((n\\\\n)/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "good simple zwt9",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "A perfect cookie",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "really good stuff.dee",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "very good sause",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "our new family favorite",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "yummo hearty soup",
+   "class": "4",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Very good delcious",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "very nice yummy",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "another great tea zwt9",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "great copy cat",
+   "class": "4",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "delicious yummy yummy",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "nice comfort food",
+   "class": "4",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Very nice taste",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "5 stars for the recipe",
+   "class": "5",
+   "tag": "n[n[n[(n/n)   n]] (n\\\\n)[((n\\\\n)/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "Very nice marinade",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "a good fast marinade",
+   "class": "4",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "The real thing",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "excellent Bolognaise sauce",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "My go to recipe",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "really nice meetballs",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "really great chili",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "my kids favourite",
+   "class": "3",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Homemade Hamburger Helper recipe",
+   "class": "4",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "cool ooh rooney",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "too many ingredients",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "wonderful light bread",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Beautiful & Spicey",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "another nice spaghetti dish",
+   "class": "4",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "really good flavor",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "1 cup of cooked lentils",
+   "class": "5",
+   "tag": "n[n[n[(n/n)   n]] (n\\\\n)[((n\\\\n)/n)   n[n[(n/n)   n]]]]"
+  },
+  {
+   "sentence": "Excellent detailed instructions",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "great spicy tender beef",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "such a wicked meal",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "Eww chorizo sausage",
+   "class": "2",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Nice place Netherlands",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Easy & fast",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "really good chicken",
+   "class": "4",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "Absolutely amazing recipe",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "Quick easy ad delicous",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "super easy super good",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "chocolatey flavor good bread",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "great pound cake",
+   "class": "4",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Really good brownies",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "wonderful quick chocolate fix",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "really good muffins",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "Awesome simple dessert",
+   "class": "4",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Mixed reviews from my family",
+   "class": "3",
+   "tag": "n[n[n[(n/n)   n]] (n\\\\n)[((n\\\\n)/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "Really great recipe",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "Really good recipe",
+   "class": "4",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "wonderful summer salad",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Very healthy ingredients",
+   "class": "4",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "Very good cookie",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "Yummy yummy vicki",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Great winter recipe",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Great easy recipe",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Really good sandwitch",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "very good recipe",
+   "class": "3",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "delicious dill dip recipe",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "A quick delightful breakfast!!Thanks",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "yam yam yam",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Really good stuff",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "Awesome peanut buttery goodness",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "Great refreashing salad",
+   "class": "4",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Very nice meatloaf",
+   "class": "4",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "FREE Social Promotion",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "very good ribs",
+   "class": "4",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "Really good soup",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "absolutely great recipe",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "the best 10 stars",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "A seafood Lover",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Amazing chines food",
+   "class": "4",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Lovely Moist cake",
+   "class": "4",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "An absolute homerun",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "very good stuff",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "great breakfast drink",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Delicious easy recipe",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "great quick dish",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "absolutely the best",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Oeey gooeey goodness",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Excellent tres leches recipe",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "Good Chicken Salad",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "great family pleaser",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n]]"
+  },
+  {
+   "sentence": "Absolutely Fantastic Pudding",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  },
+  {
+   "sentence": "AWESOME mix Big B",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "My favorite ribs recipe",
+   "class": "5",
+   "tag": "n[(n/n)   n[(n/n)   n[(n/n)   n]]]"
+  },
+  {
+   "sentence": "very good delicious",
+   "class": "5",
+   "tag": "n[(n/n)[((n/n)/(n/n))   (n/n)] n]"
+  }
+ ],
+ "test_data": [
+  {
+   "sentence": "excellent cheese sauce",
+   "class": "5"
+  },
+  {
+   "sentence": "Very yummy thanks",
+   "class": "5"
+  },
+  {
+   "sentence": "a 10 star",
+   "class": "5"
+  },
+  {
+   "sentence": "very good bread",
+   "class": "5"
+  },
+  {
+   "sentence": "nice twist on a classic",
+   "class": "5"
+  },
+  {
+   "sentence": "Nice alternative recipe",
+   "class": "5"
+  },
+  {
+   "sentence": "Great bite size appetizers",
+   "class": "5"
+  },
+  {
+   "sentence": "Tasty & Quick",
+   "class": "4"
+  },
+  {
+   "sentence": "A tasty curry",
+   "class": "3"
+  },
+  {
+   "sentence": "killer recipe zaaaaar",
+   "class": "5"
+  },
+  {
+   "sentence": "  very nice drink",
+   "class": "5"
+  },
+  {
+   "sentence": "Lovely moist cake",
+   "class": "5"
+  },
+  {
+   "sentence": "huuuuuuuuuummmm miam miam",
+   "class": "5"
+  },
+  {
+   "sentence": "So Easy Thanks",
+   "class": "4"
+  },
+  {
+   "sentence": "very good casserole",
+   "class": "5"
+  },
+  {
+   "sentence": "Too much potato",
+   "class": "1"
+  },
+  {
+   "sentence": "so tasty dish thanks",
+   "class": "5"
+  },
+  {
+   "sentence": "great classic recipe",
+   "class": "4"
+  },
+  {
+   "sentence": "Excellent recipe for family gatherings",
+   "class": "5"
+  },
+  {
+   "sentence": "Totally awesome recipe",
+   "class": "5"
+  }
+ ]
+}

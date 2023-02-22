@@ -34,7 +34,7 @@ It can be done either using Jupyter notebook `Prepare_datasets_4classifier.ipynb
 	
 	These scripts determine syntactical structure of text. Text lines longer than 6 tokens are omitted. As a result 3-column files are created containing class, text and syntactic tags of the text.
 
-Files with syntactic tags `withtags_Reviews.tsv`, `withtags_labelled_newscatcher_dataset.tsv`, `withtags_RAW_interactions.tsv` and `withtags_amazonreview_train.tsv` are included in *../datasets* folder.
+Files with syntactic tags `Reviews_alltrees.tsv`, `labelled_newscatcher_dataset_alltrees.tsv`, `RAW_interactions_alltrees.tsv` are included in *../datasets* folder.
 	
 	- use script `filter-by_syntax.py` to select the text lines with certain syntactical structure. The script has the following parameters:
 	
@@ -42,7 +42,7 @@ Files with syntactic tags `withtags_Reviews.tsv`, `withtags_labelled_newscatcher
 		- *-o* or *--outfile* \<Filtered 2-column file\>
 		- *-f* or *--filterfile* \<File containing list of preferable syntactical tags\> 
 		
-Allready filtered data `reviews.tsv`, `labelled_newscatcher_dataset.tsv`, `RAW_interactions.tsv` and `amazonreview_train.tsv` are included in *../datasets* folder. These files contain text examples that parse patterns in text file *../datasets/tags.txt*.
+Allready filtered data `reviews_filtered.tsv`, `labelled_newscatcher_dataset_filtered.tsv`, `RAW_interactions_filtered.tsv` and `amazonreview_train_filtered.tsv` are included in *../datasets* folder. These files contain text examples that parse patterns in text file *../datasets/validtrees.txt*.
 
 3. Split data in train/test parts and obtain embeddings using sentence transformer and BERT sentence-level embeddings and fastText word-level embeddings.
 
