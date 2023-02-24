@@ -82,7 +82,7 @@ class NNClassifier:
         return opt
 
 
-    def train(self, trainX, trainY):
+    def train(self, trainX, trainY, devX=[], devY=[]):
         '''Trains the model.
         @param trainX: training data
         @param trainY: training targets (labels)
@@ -99,8 +99,11 @@ class NNClassifier:
         self.model.compile(optimizer=optimizer,
                 loss='categorical_crossentropy',
                 metrics=['accuracy'])
-        return self.model.fit(trainX, trainY, epochs=self.params["epochs"], verbose=2,)
-                  #callbacks=callbacks)
+        if len(devX) == 0: #without early stopping
+            return self.model.fit(trainX, trainY, epochs=self.params["epochs"], verbose=2,)
+        else:
+            callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=3)
+            return self.model.fit(trainX, trainY, epochs=self.params["epochs"], validation_data=(devX, devY), verbose=2, callbacks=[callback])
 
     def predict(self, testX):
         res = self.model.predict(testX)
@@ -126,6 +129,23 @@ def loadData(file):
         data = json.load(f)
     return data
 
+def prepareXYSentence(data, classify_by_field="truth_value"):
+    '''Prepares the data as numpy arrays suitable for training.
+    @param data: the data to process
+    @return: 2 numpy arrays corresponding to input data and labels
+    '''
+    idxdict = prepareClassValueDict(data, classify_by_field)
+    
+    arrX = []
+    arrY = []
+    for ex in data:
+        arrX.append(ex["sentence_vectorized"][0])
+        arrY.append(idxdict[ex[classify_by_field]])
+    X = np.array(arrX)
+    labelencoder = LabelEncoder()
+    Y = tf.keras.utils.to_categorical(arrY, num_classes=len(idxdict))
+    return X, Y
+    
 def prepareTrainTestXYSentence(data, classify_by_field="truth_value"):
     '''Prepares the data as numpy arrays suitable for training.
     @param data: the data to process
@@ -146,12 +166,65 @@ def prepareTrainTestXYSentence(data, classify_by_field="truth_value"):
         dY.append(Y)
     return dX[0], dY[0], dX[1], dY[1]
 
+def prepareClassValueDict(dataset, classify_by_field):
+    idxdict = {}
+    idx=0
+    for ex in dataset: #training set has all class values
+        if ex[classify_by_field] not in idxdict.keys():
+            idxdict[ex[classify_by_field]] = idx
+            idx = idx + 1
+    return idxdict
+    
+def prepareTrainTestDevXYSentence(data, classify_by_field="truth_value"):
+    '''Prepares the data as numpy arrays suitable for training.
+    @param data: the data to process
+    @return: 6 numpy arrays corresponding to training, test and dev input data and labels
+    '''
+    idxdict = prepareClassValueDict(data["train_data"], classify_by_field)
+    
+    dX = []
+    dY = []
+    for i, dd in enumerate(["train_data", "test_data", "dev_data"]):
+        arrX = []
+        arrY = []
+        for ex in data[dd]:
+            arrX.append(ex["sentence_vectorized"][0])
+            arrY.append(idxdict[ex[classify_by_field]])
+        X = np.array(arrX)
+        Y = tf.keras.utils.to_categorical(arrY, num_classes=len(idxdict))
+        dX.append(X)
+        dY.append(Y)
+    return dX[0], dY[0], dX[1], dY[1], dX[2], dY[2]
+    
 def appendZeroVector(x, N, dim):
     if len(x) > N:
         return x[:N]
     return x + [[0] * dim] * (N - len(x))
 
+def prepareXYWords(data, maxLen, classify_by_field="truth_value"):
+    '''Prepares the data as numpy arrays suitable for training.
+    @param data: the data to process
+    @param maxLen: maximum sentence length. Longer sentences are truncated,
+        shorter sentences are padded with all-zero vectors
+    @return: 2 numpy arrays corresponding to input data and labels
+    '''
+    idxdict = prepareClassValueDict(data, classify_by_field)
 
+    arrX = []
+    arrY = []
+    for ex in data:
+        sentenceVectors = []
+        for w in ex["sentence_vectorized"]:
+            sentenceVectors.append(w["vector"])
+            dim = len(w["vector"])
+        arrX.append(sentenceVectors)
+        arrY.append(idxdict[ex[classify_by_field]])
+    arrX = [appendZeroVector(sv, maxLen, dim) for sv in arrX]
+    X = np.array(arrX)
+    Y = tf.keras.utils.to_categorical(arrY, num_classes=len(idxdict))
+
+    return X, Y
+    
 def prepareTrainTestXYWords(data, maxLen, classify_by_field="truth_value"):
     '''Prepares the data as numpy arrays suitable for training.
     @param data: the data to process
@@ -175,11 +248,38 @@ def prepareTrainTestXYWords(data, maxLen, classify_by_field="truth_value"):
         X = np.array(arrX)
         labelencoder = LabelEncoder()
         Y = tf.keras.utils.to_categorical(labelencoder.fit_transform(arrY), None)
-        #Y = tf.keras.utils.to_categorical(arrY, None)
         dX.append(X)
         dY.append(Y)
     return dX[0], dY[0], dX[1], dY[1]
 
+def prepareTrainTestDevXYWords(data, maxLen, classify_by_field="truth_value"):
+    '''Prepares the data as numpy arrays suitable for training.
+    @param data: the data to process
+    @param maxLen: maximum sentence length. Longer sentences are truncated,
+        shorter sentences are padded with all-zero vectors
+    @return: four numpy arrays corresponding to training, test and dev input data and labels
+    '''
+    idxdict = prepareClassValueDict(data["train_data"], classify_by_field)
+    dX = []
+    dY = []
+    for i, dd in enumerate(["train_data", "test_data", "dev_data"]):
+        arrX = []
+        arrY = []
+        for ex in data[dd]:
+            sentenceVectors = []
+            print(ex["sentence"])
+            for w in ex["sentence_vectorized"]:
+                sentenceVectors.append(w["vector"])
+                dim = len(w["vector"])
+            arrX.append(sentenceVectors)
+            arrY.append(idxdict[ex[classify_by_field]])
+        arrX = [appendZeroVector(sv, maxLen, dim) for sv in arrX]
+        X = np.array(arrX)
+        Y = tf.keras.utils.to_categorical(arrY, num_classes=len(idxdict))
+        dX.append(X)
+        dY.append(Y)
+    return dX[0], dY[0], dX[1], dY[1], dX[2], dY[2]
+  
 def evaluate(predictions, testY):
     """Evaluates the accuracy of the predictions."""
     return np.sum(predictions == np.argmax(testY, axis=1))/len(testY)

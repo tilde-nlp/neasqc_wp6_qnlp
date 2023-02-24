@@ -8,6 +8,8 @@ import fasttext.util
 from sentence_transformers import SentenceTransformer
 import torch
 from transformers import BertTokenizer, BertModel
+import csv
+import argparse
 
 class Embeddings:
     def __init__(self, path, embtype):
@@ -62,3 +64,43 @@ class Embeddings:
         except:
             print('Failed to get embeddings for sentence: ' + sentence)
         return embvec
+        
+def main():
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-i", "--infile", help = "file with text examples")
+    parser.add_argument("-o", "--outfile", help = "json file with embeddings")
+    parser.add_argument("-c", "--column", help = "'3' - 3-column file containing class, text and parse tree columns, '0' - if the whole line is text example")
+    parser.add_argument("-t", "--mtype", help = "Embedding model type: 'fasttext', 'bert' or 'transformer'")
+    parser.add_argument("-m", "--model", help = "Pre-trained embedding model. Some examples: 'cc.en.300.bin' 'bert-base-uncased' 'all-distilroberta-v1'")
+    args = parser.parse_args()
+
+    dataset = []
+    
+    try:
+        rowlist = open(args.infile).read().splitlines()
+        vc = Embeddings(args.model,args.mtype)
+        
+        for i, line in enumerate(rowlist):
+            print(f"{i}/{len(rowlist)}")
+            d = {}
+            if str(args.column) == '0':
+                d["sentence"]=line.rstrip()
+            elif  str(args.column) == '3':
+                linecols = line.split('\t')
+                d["class"]=linecols[0].rstrip()
+                d["sentence"]=linecols[1].rstrip()
+                d["tree"]=linecols[2].rstrip()
+            else:
+                raise Exception("Wrong value of the column argument! Must be '0' to vectorize whole line or '3' if line contains class, text and parse tree columns.")
+            d["sentence_vectorized"] = vc.getEmbeddingVector(d["sentence"])
+            dataset.append(d)
+
+        with open(args.outfile, "w", encoding="utf-8") as f:
+            json.dump(dataset, f, indent=2)
+    except Exception as err:
+        print(f"Unexpected {err=}")
+
+
+if __name__ == "__main__":
+    sys.exit(int(main() or 0))
