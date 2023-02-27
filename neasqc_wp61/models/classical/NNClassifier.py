@@ -106,7 +106,7 @@ class NNClassifier:
             return self.model.fit(trainX, trainY, epochs=self.params["epochs"], validation_data=(devX, devY), verbose=2, callbacks=[callback])
 
     def predict(self, testX):
-        res = self.model.predict(testX)
+        res = self.model.predict(testX, verbose=0)
         topPrediction = np.argmax(res, axis=1)
         return topPrediction
 
@@ -129,12 +129,13 @@ def loadData(file):
         data = json.load(f)
     return data
 
-def prepareXYSentence(data, classify_by_field="truth_value"):
+def prepareXYSentence(data, classify_by_field="truth_value",idxdict={}):
     '''Prepares the data as numpy arrays suitable for training.
     @param data: the data to process
     @return: 2 numpy arrays corresponding to input data and labels
     '''
-    idxdict = prepareClassValueDict(data, classify_by_field)
+    if len(idxdict) == 0:
+        idxdict = prepareClassValueDict(data, classify_by_field)
     
     arrX = []
     arrY = []
@@ -145,6 +146,18 @@ def prepareXYSentence(data, classify_by_field="truth_value"):
     labelencoder = LabelEncoder()
     Y = tf.keras.utils.to_categorical(arrY, num_classes=len(idxdict))
     return X, Y
+
+def prepareXSentence(data):
+    '''Prepares the data as numpy array suitable for testing.
+    @param data: the data to process
+    @return: numpy array corresponding to input data
+    '''
+  
+    arrX = []
+    for ex in data:
+        arrX.append(ex["sentence_vectorized"][0])
+    X = np.array(arrX)
+    return X
     
 def prepareTrainTestXYSentence(data, classify_by_field="truth_value"):
     '''Prepares the data as numpy arrays suitable for training.
@@ -201,14 +214,15 @@ def appendZeroVector(x, N, dim):
         return x[:N]
     return x + [[0] * dim] * (N - len(x))
 
-def prepareXYWords(data, maxLen, classify_by_field="truth_value"):
+def prepareXYWords(data, maxLen, classify_by_field="truth_value",idxdict={}):
     '''Prepares the data as numpy arrays suitable for training.
     @param data: the data to process
     @param maxLen: maximum sentence length. Longer sentences are truncated,
         shorter sentences are padded with all-zero vectors
     @return: 2 numpy arrays corresponding to input data and labels
     '''
-    idxdict = prepareClassValueDict(data, classify_by_field)
+    if len(idxdict) == 0:
+        idxdict = prepareClassValueDict(data, classify_by_field)
 
     arrX = []
     arrY = []
@@ -224,6 +238,25 @@ def prepareXYWords(data, maxLen, classify_by_field="truth_value"):
     Y = tf.keras.utils.to_categorical(arrY, num_classes=len(idxdict))
 
     return X, Y
+
+def prepareXWords(data, maxLen=6):
+    '''Prepares the data as numpy array suitable for testing.
+    @param data: the data to process
+    @param maxLen: maximum sentence length. Longer sentences are truncated,
+        shorter sentences are padded with all-zero vectors
+    @return: numpy array corresponding to input data
+    '''
+    arrX = []
+    for ex in data:
+        sentenceVectors = []
+        for w in ex["sentence_vectorized"]:
+            sentenceVectors.append(w["vector"])
+            dim = len(w["vector"])
+        arrX.append(sentenceVectors)
+    arrX = [appendZeroVector(sv, maxLen, dim) for sv in arrX]
+    X = np.array(arrX)
+
+    return X
     
 def prepareTrainTestXYWords(data, maxLen, classify_by_field="truth_value"):
     '''Prepares the data as numpy arrays suitable for training.

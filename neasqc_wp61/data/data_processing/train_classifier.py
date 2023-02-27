@@ -2,8 +2,9 @@
 
 import sys
 import argparse
+import json
 sys.path.append("../../models/classical/")
-from NNClassifier import (loadData, NNClassifier, prepareXYWords, prepareXYSentence)
+from NNClassifier import (loadData, NNClassifier, prepareXYWords, prepareXYSentence, prepareClassValueDict)
 
  
 def main():
@@ -19,15 +20,17 @@ def main():
     try:
         traindata = loadData(args.traindata)
         devdata = loadData(args.devdata)
-        
+
+        idxdict = prepareClassValueDict(traindata, args.field)
+            
         if args.etype == "word":
             classifier = NNClassifier(model='CNN',vectorSpaceSize=300)
             maxLen = 6
-            trainX, trainY = prepareXYWords(traindata, maxLen, args.field)
+            trainX, trainY = prepareXYWords(traindata, maxLen, args.field, idxdict)
             devX, devY = prepareXYWords(devdata, maxLen, args.field)
         elif args.etype == "sentence":
             classifier = NNClassifier()
-            trainX, trainY = prepareXYSentence(traindata, args.field)
+            trainX, trainY = prepareXYSentence(traindata, args.field, idxdict)
             devX, devY = prepareXYSentence(devdata, args.field)
         else:
             print("Invalid embedding type. it must be 'word' or 'sentence'.")
@@ -38,6 +41,9 @@ def main():
         print(f"Model train accuracy: {nn_train_acc}")
         print(f"Saving model to {args.modeldir}")
         classifier.save(args.modeldir)
+        inv_map = {v: k for k, v in idxdict.items()}
+        with open(args.modeldir+'/dict.json', 'w') as map_file:
+            map_file.write(json.dumps(inv_map))
         
     except Exception as err:
         print(f"Unexpected {err=}")
