@@ -7,7 +7,7 @@ delimiter=','
 classfield='-'
 txtfield='-'
 
-while getopts i:d:c:t flag
+while getopts i:d:c:t: flag
 do
     case "${flag}" in
         i) infile=${OPTARG};;

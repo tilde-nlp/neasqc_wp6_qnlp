@@ -96,6 +96,7 @@ def main():
             d["sentence_vectorized"] = vc.getEmbeddingVector(d["sentence"])
             dataset.append(d)
 
+        print(f"Saving vectors to {args.outfile}")
         with open(args.outfile, "w", encoding="utf-8") as f:
             json.dump(dataset, f, indent=2)
     except Exception as err:

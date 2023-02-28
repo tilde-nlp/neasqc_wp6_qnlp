@@ -36,7 +36,7 @@ def main():
             print("Invalid embedding type. it must be 'word' or 'sentence'.")
             sys.exit(0)
 	
-        history = classifier.train(trainX, trainY)
+        history = classifier.train(trainX, trainY, devX, devY)
         nn_train_acc = history.history["accuracy"][-1]
         print(f"Model train accuracy: {nn_train_acc}")
         print(f"Saving model to {args.modeldir}")

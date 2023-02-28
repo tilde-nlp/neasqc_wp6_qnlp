@@ -5,7 +5,7 @@ echo 'This script filters lines that have a certain syntactical structure.'
 infile='-'
 filterfile='-'
 
-while getopts i:f flag
+while getopts i:f: flag
 do
     case "${flag}" in
         i) infile=${OPTARG};;
@@ -28,4 +28,5 @@ Options:
 	echo "$__usage"
 else
 	python ./filter-by_syntax.py -i "${infile}" -o "${outfile}" -f "${filterfile}"
+	wc -l $outfile | awk '{ print $1, " lines added to the filtered file."}'
 fi

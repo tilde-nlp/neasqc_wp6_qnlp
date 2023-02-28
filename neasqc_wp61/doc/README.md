@@ -46,7 +46,7 @@ Examples:
 
 `1_Filter6Parse.sh -i ../data/datasets/train.csv -d ','`
 
-`1_Filter6Parse.sh -i ../data/datasets/labelled_newscatcher_dataset.csv -d ';' -c 'Topic' -t 'Title'`
+`1_Filter6Parse.sh -i ../data/datasets/labelled_newscatcher_dataset.csv -d ';' -c 'topic' -t 'title'`
 
 Files with syntactic tags `Reviews_alltrees.tsv`, `labelled_newscatcher_dataset_alltrees.tsv`, `RAW_interactions_alltrees.tsv` are included in *../datasets* folder.
 
@@ -54,12 +54,12 @@ Files with syntactic tags `Reviews_alltrees.tsv`, `labelled_newscatcher_dataset_
 
 To perform this step run the script *2_FilterSyntacticTrees.sh* passing the following parameters:
 
-	- *-i <input file>*         TAB separated 3-column file to filter
-	- *-t <text field>*         File containing list of preferable syntactical tags
+	- *-i <input file>*               TAB separated 3-column file to filter
+	- *-f <syntactical trees file>*   File containing list of preferable syntactical tags
 
 Example:
 
-`2_FilterSyntacticTrees.sh -i ../data/datasets/Reviews_alltrees.tsv -t ../data/datasets/validtrees.txt`
+`2_FilterSyntacticTrees.sh -i ../data/datasets/Reviews_alltrees.tsv -f ../data/datasets/validtrees.txt`
 	
 #### Step 3 - Split data in train/dev/test parts with proportions 80/10/10.
 
@@ -95,6 +95,13 @@ Example:
 
 #### Step 5 - Training model.
 
+Examples:
+
+`./5_TrainNNModel.sh -t ../datasets/reviews_filtered_train_all-distilroberta-v1.json -d ../datasets/reviews_filtered_dev_all-distilroberta-v1.json -f 'class' -e 'sentence' -m ../../models/classical/reviews_distilroberta`
+
+`./5_TrainNNModel.sh -t ../datasets/reviews_filtered_train_bert-base-uncased.json -d ../datasets/reviews_filtered_dev_bert-base-uncased.json -f 'class' -e 'sentence' -m ../../models/classical/reviews_bert-uncased`
+
+`./5_TrainNNModel.sh -t ../datasets/amazonreview_train_filtered_train_fasttext.json -d ../datasets/amazonreview_train_filtered_dev_fasttext.json -f 'class' -e 'word' -m ../../models/classical/amazonreview_test_fasttext`
 
 
 #### Step 6 - Using classifier.
@@ -112,7 +119,21 @@ Example:
 
 `7_EvaluateResults.sh -e ../data/datasets/labelled_newscatcher_dataset_filtered_test.tsv -c results.txt`
 
-### New Results
+### Results
+
+#### Results for data with noun phrases
+
+Test examples has the following syntactical structure:
+
+`n[(n/n)   n[(n/n)   n]]`
+
+`n[(n/n)   n[(n/n)   n[(n/n)   n]]]`
+
+`n[n[n[(n/n)   n]] (n\\n)[((n\\n)/n)   n[n[(n/n)   n]]]]`
+
+`n[(n/n)[((n/n)/(n/n))   (n/n)] n]`
+
+`n[n[n[(n/n)   n]] (n\\n)[((n\\n)/n)   n[(n/n)   n]]]`
 
 |                                                                                                                    | review.tsv<br>(train: 27001, test: 3001)<br>5 classes | labelled_newscatcher_dataset.tsv<br>(train: 160, test: 18)<br>8 classes | amazonreview_train.tsv<br>(train: 183918, test: 20436)<br>2 classes |
 |--------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------|-------------------------------------------------------------------------|---------------------------------------------------------------------|
@@ -121,3 +142,28 @@ Example:
 | Transformer sentence emb.: *all-distilroberta-v1*<br>NN model type: Shallow feedforward neural network             | Train accuracy: 0.7465<br>Test accuracy: 0.7330       | Train accuracy: 0.9366<br>Test accuracy: 0.7777                         | Train accuracy: 0.8264<br>Test accuracy: 0.8231                     |
 | BERT word emb.: *bert-base-uncased*<br>NN model type: Shallow feedforward neural network                           | Train accuracy: 0.7385<br>Test accuracy: 0.7256       | Train accuracy: 0.9929<br>Test accuracy: 0.7777                         | Train accuracy: 0.8115<br>Test accuracy: 0.8073                     |
 | BERT word emb.: *bert-base-cased*<br>NN model type: Shallow feedforward neural network                             | Train accuracy: 0.7324<br>Test accuracy: 0.7163       | Train accuracy: 1.0000<br>Test accuracy: 0.7222                         | Train accuracy: 0.7810<br>Test accuracy: 0.7788                     |
+
+#### Results for data with sentences
+
+Test examples has the following syntactical structure:
+
+`s[n[n] (s\\n)[((s\\n)/(s\\n))   (s\\n)]]`
+
+`s[n[(n/n)   n] (s\\n)[((s\\n)/(s\\n))   (s\\n)]]`
+
+`s[n[n[(n/n)   n]] (s\\n)]`
+
+`s[n   (s\\n)[((s\\n)/n)   n[(n/n)   n]]]`
+
+`s[n   (s\\n)[((s\\n)/n)   n[(n/n)   n[(n/n)   n]]]]`
+
+Dataset *labelled_newscatcher_dataset* has only 12 examples and *RAW_interactions* has only 77 examples after filtering. As the number of examples is too small models are not trained for these datasets.
+
+|                                                                                                                    | review.tsv<br>(train: 0, dev: , test: 0)<br>5 classes | amazonreview_train.tsv<br>(train: 16853, dev: 2107, test: 2107)<br>2 classes |
+|--------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------|-----------------------------------------------------------------------|
+| fastText word emb.: *cc.en.300.bin*<br>NN model type: Convolutional network (max sentence length 6)                | Train accuracy: 0.9524<br>Test accuracy: 0.0             | Train accuracy: 0.9576<br>Test accuracy: 0.8287                             |
+| Transformer sentence emb.: *all-mpnet-base-v2*<br>NN model type: Shallow feedforward neural network                | Train accuracy: 0.7726<br>Test accuracy: 0.0             | Train accuracy: 0.8739<br>Test accuracy: 0.8638                             |
+| Transformer sentence emb.: *all-distilroberta-v1*<br>NN model type: Shallow feedforward neural network             | Train accuracy: 0.7707<br>Test accuracy: 0.0             | Train accuracy: 0.8587<br>Test accuracy: 0.8415                             |
+| BERT word emb.: *bert-base-uncased*<br>NN model type: Shallow feedforward neural network                           | Train accuracy: 0.8208<br>Test accuracy: 0.0             | Train accuracy: 0.8420<br>Test accuracy: 0.8249                             |
+| BERT word emb.: *bert-base-cased*<br>NN model type: Shallow feedforward neural network                             | Train accuracy: 0.7964<br>Test accuracy: 0.0             | Train accuracy: 0.8060<br>Test accuracy: 0.7864                             |
+

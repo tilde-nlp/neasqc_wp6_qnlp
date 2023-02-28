@@ -7,7 +7,8 @@ import tensorflow as tf
 from tensorflow.keras.models import Sequential, Model, load_model
 from tensorflow.keras.layers import (Input, Dense, Activation, Conv1D,
                           Dropout, MaxPooling1D, Flatten)
-from tensorflow.keras.optimizers import Adam
+#from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.optimizers.legacy import Adam
 from tensorflow.keras import regularizers
 from sklearn.preprocessing import LabelEncoder
 import argparse
@@ -99,9 +100,12 @@ class NNClassifier:
         self.model.compile(optimizer=optimizer,
                 loss='categorical_crossentropy',
                 metrics=['accuracy'])
+
+        print("Length of dev data is "+str(len(devX)))       
         if len(devX) == 0: #without early stopping
             return self.model.fit(trainX, trainY, epochs=self.params["epochs"], verbose=2,)
         else:
+            print("Training with early stopping.")       
             callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=3)
             return self.model.fit(trainX, trainY, epochs=self.params["epochs"], validation_data=(devX, devY), verbose=2, callbacks=[callback])
 

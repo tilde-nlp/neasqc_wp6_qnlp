@@ -4,7 +4,7 @@ import json
 import csv
 import subprocess
 from lambeq import BobcatParser
-bobcat_parser = BobcatParser()
+bobcat_parser = BobcatParser(device=0)
 from lambeq import SpacyTokeniser
 tokeniser = SpacyTokeniser()
 import re

@@ -7,7 +7,7 @@ embtype='-'
 embname='-'
 column='0'
  
-while getopts i:c:m:t flag
+while getopts i:c:m:t: flag
 do
     case "${flag}" in
         i) infile=${OPTARG};;
@@ -19,13 +19,12 @@ done
 
 if [[ "$embtype" == "fasttext" ]] 
 then
-	replace="_{embtype}.json"
+	replace="_${embtype}.json"
 else
-	replace="_{embname}.json"
+	replace="_${embname}.json"
 fi
 
 outfile=${infile//.tsv/$replace}
-outfile=${infile//.txt/$replace}
 
 if [[ "$infile" == "-" ]] || [[ "$embtype" == "-" ]] || [[ "$embname" == "-" ]]
 then
