@@ -3,7 +3,7 @@
 import sys
 import argparse
 import json
-sys.path.append("../../models/classical/")
+sys.path.append("./models/classical/")
 from NNClassifier import (loadData, NNClassifier, prepareXYWords, prepareXYSentence, prepareClassValueDict)
 
  
@@ -15,6 +15,7 @@ def main():
     parser.add_argument("-f", "--field", help = "Classify by field")
     parser.add_argument("-e", "--etype", help = "Embedding type: sentence or word")
     parser.add_argument("-m", "--modeldir", help = "Directory where to save the trained model")
+    parser.add_argument("-g", "--gpu", help = "Number of GPU to use (from '0' to available GPUs), '-1' if use CPU (default is '-1')")
     args = parser.parse_args()
     print(args)
     try:
@@ -24,12 +25,12 @@ def main():
         idxdict = prepareClassValueDict(traindata, args.field)
             
         if args.etype == "word":
-            classifier = NNClassifier(model='CNN',vectorSpaceSize=300)
+            classifier = NNClassifier(model='CNN',vectorSpaceSize=300, gpu=int(args.gpu))
             maxLen = 6
             trainX, trainY = prepareXYWords(traindata, maxLen, args.field, idxdict)
             devX, devY = prepareXYWords(devdata, maxLen, args.field)
         elif args.etype == "sentence":
-            classifier = NNClassifier()
+            classifier = NNClassifier(gpu=int(args.gpu))
             trainX, trainY = prepareXYSentence(traindata, args.field, idxdict)
             devX, devY = prepareXYSentence(devdata, args.field)
         else:

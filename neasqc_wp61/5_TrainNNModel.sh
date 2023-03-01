@@ -7,8 +7,9 @@ dfile='-'
 field='class'
 etype='-'
 modeldir='-'
+gpu='-1'
  
-while getopts t:d:f:e:m: flag
+while getopts t:d:f:e:m:g: flag
 do
     case "${flag}" in
         t) tfile=${OPTARG};;
@@ -16,6 +17,7 @@ do
         f) field=${OPTARG};;
         e) etype=${OPTARG};;
         m) modeldir=${OPTARG};;
+        g) gpu=${OPTARG};;
     esac
 done
 
@@ -30,8 +32,9 @@ Options:
   -f <field>           Classify by field
   -e <embedding type>  Embedding type: 'sentence' or 'word'
   -m <model directory> Directory where to save trained model
+  -g <use gpu>		   Number of GPU to use (from 0 to available GPUs), -1 if use CPU (dfault is -1)
 "
 	echo "$__usage"
 else
-	python train_classifier.py -t "${tfile}" -d "${dfile}" -f "${field}" -e "${etype}" -m "${modeldir}"
+	python ./data/data_processing/train_classifier.py -t "${tfile}" -d "${dfile}" -f "${field}" -e "${etype}" -m "${modeldir}"  -g "${gpu}"
 fi

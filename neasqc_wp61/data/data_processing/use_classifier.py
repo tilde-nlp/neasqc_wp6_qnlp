@@ -13,17 +13,18 @@ def main():
     parser.add_argument("-i", "--infile", help = "Json data file for classifier testing (with embeddings)")
     parser.add_argument("-m", "--modeldir", help = "Directory of pre-tained classifier model")
     parser.add_argument("-e", "--etype", help = "Embedding type: sentence or word")
+    parser.add_argument("-g", "--gpu", help = "Number of GPU to use (from '0' to available GPUs), '-1' if use CPU (default is '-1')")
     args = parser.parse_args()
 
     try:
         testdata = loadData(args.infile)
         classdict = loadData(args.modeldir+'/dict.json')      
         if args.etype == "word":
-            classifier = NNClassifier(model='CNN',vectorSpaceSize=300)
+            classifier = NNClassifier(model='CNN',vectorSpaceSize=300, gpu=int(args.gpu))
             classifier.load(args.modeldir)
             X=prepareXWords(testdata)
         elif args.etype == "sentence":
-            classifier = NNClassifier()
+            classifier = NNClassifier(gpu=int(args.gpu))
             classifier.load(args.modeldir)
             X=prepareXSentence(testdata)
         else:

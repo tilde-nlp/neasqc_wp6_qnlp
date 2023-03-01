@@ -27,6 +27,6 @@ Options:
 "
 	echo "$__usage"
 else
-	python ./filter-by_syntax.py -i "${infile}" -o "${outfile}" -f "${filterfile}"
+	python ./data/data_processing/filter-by_syntax.py -i "${infile}" -o "${outfile}" -f "${filterfile}"
 	wc -l $outfile | awk '{ print $1, " lines added to the filtered file."}'
 fi

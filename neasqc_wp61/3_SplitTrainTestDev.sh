@@ -21,5 +21,5 @@ Options:
 "
 	echo "$__usage"
 else
-	python ./train_test_dev_split.py -i "${infile}"
+	python ./data/data_processing/train_test_dev_split.py -i "${infile}"
 fi

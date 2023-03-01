@@ -7,8 +7,8 @@ import tensorflow as tf
 from tensorflow.keras.models import Sequential, Model, load_model
 from tensorflow.keras.layers import (Input, Dense, Activation, Conv1D,
                           Dropout, MaxPooling1D, Flatten)
-#from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.optimizers.legacy import Adam
+from tensorflow.keras.optimizers import Adam
+#from tensorflow.keras.optimizers.legacy import Adam
 from tensorflow.keras import regularizers
 from sklearn.preprocessing import LabelEncoder
 import argparse
@@ -31,10 +31,10 @@ class NNClassifier:
             "learning_rate": 0.001,
             "beta_1": 0.9,
             "beta_2": 0.999,
-            "decay": 0,
             "epochs": 100,
             "epsilon": None,
             "amsgrad": False,
+            "gpu": -1
         }
         if "model" in kwargs and kwargs["model"] == "CNN": #defaults for CNN
             self.params["epochs"] = 30
@@ -43,6 +43,15 @@ class NNClassifier:
             self.params["dropout"] = 0.5
 
         self.params.update(kwargs)
+        gpudevices = tf.config.list_physical_devices('GPU')
+        cpudevices = tf.config.list_physical_devices('CPU')
+
+        if (self.params["gpu"] == -1 and len(cpudevices) > 0): # want CPU, has CPU
+            print("Training/running model on CPU.")
+            tf.config.set_visible_devices([], 'GPU')
+        elif (self.params["gpu"] > -1 and len(gpudevices) > self.params["gpu"]): # want GPU, has GPU with that number
+            tf.config.set_visible_devices(gpudevices[self.params["gpu"]], 'GPU')
+            print("Training/running model on GPU: ", gpudevices[self.params["gpu"]])
 
     @staticmethod
     def createModel1(vectorSpaceSize, nClasses, **kwargs):
@@ -77,9 +86,9 @@ class NNClassifier:
 
     @staticmethod
     def createAdamOptimizer(learning_rate=0.001, beta_1=0.9, beta_2=0.999,
-                            decay=0, epsilon=None, amsgrad=False, **kwargs):
+                            epsilon=None, amsgrad=False, **kwargs):
         opt = Adam(learning_rate=learning_rate, beta_1=beta_1, beta_2=beta_2,
-                    epsilon=epsilon, decay=decay, amsgrad=amsgrad)
+                    epsilon=epsilon, amsgrad=amsgrad)
         return opt
 
 
@@ -101,7 +110,6 @@ class NNClassifier:
                 loss='categorical_crossentropy',
                 metrics=['accuracy'])
 
-        print("Length of dev data is "+str(len(devX)))       
         if len(devX) == 0: #without early stopping
             return self.model.fit(trainX, trainY, epochs=self.params["epochs"], verbose=2,)
         else:

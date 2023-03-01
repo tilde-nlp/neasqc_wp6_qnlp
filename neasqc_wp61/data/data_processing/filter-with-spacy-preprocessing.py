@@ -4,7 +4,6 @@ import json
 import csv
 import subprocess
 from lambeq import BobcatParser
-bobcat_parser = BobcatParser(device=0)
 from lambeq import SpacyTokeniser
 tokeniser = SpacyTokeniser()
 import re
@@ -18,6 +17,7 @@ def main():
     parser.add_argument("-c", "--classfield", required=False, help = "Name of class field")
     parser.add_argument("-t", "--txtfield", required=False, help = "Name of text field")
     parser.add_argument("-f", "--firstsentence", action='store_true', required=False, help = "Take the first sentence if the text is longer that 6 tokens")   
+    parser.add_argument("-g", "--gpu", help = "Number of GPU to use (from '0' to available GPUs), '-1' if use CPU (default is '-1')")
     args = parser.parse_args()
     
     if args.classfield != None: 
@@ -26,7 +26,8 @@ def main():
     else:
         classfield = 'f1'
         txtfield = 'f2'
-
+ 
+    bobcat_parser = BobcatParser(device=int(args.gpu))
     print(classfield+' and '+txtfield)
     with open(args.infile, encoding="utf8", newline='') as csvfile, open(args.outfile, "w", encoding="utf8") as tsvfile:
         if args.classfield != None: 
@@ -34,7 +35,7 @@ def main():
         else:
             news_reader = csv.DictReader(csvfile, delimiter=args.delimiter, fieldnames = [classfield, txtfield], quotechar='"')        
         processed_summaries = set()
-        norm_process_params = ["perl", "./scripts/normalize-punctuation.perl","-b","-l", "en"]
+        norm_process_params = ["perl", "./data/data_processing/scripts/normalize-punctuation.perl","-b","-l", "en"]
         norm_process = subprocess.Popen(norm_process_params, stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)
 	
         for row in news_reader:

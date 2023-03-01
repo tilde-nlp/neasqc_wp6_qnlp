@@ -6,14 +6,16 @@ infile='-'
 embtype='-'
 embname='-'
 column='0'
+gpu='-1'
  
-while getopts i:c:m:t: flag
+while getopts i:c:m:t:g: flag
 do
     case "${flag}" in
         i) infile=${OPTARG};;
         c) column=${OPTARG};;
         m) embname=${OPTARG};;
         t) embtype=${OPTARG};;
+        g) gpu=${OPTARG};;
     esac
 done
 
@@ -36,8 +38,9 @@ Options:
   -c <column>          '3' - if 3-column input file containing class, text and parse tree columns, '0' - if the whole line is a text example
   -m <embedding name>  Name of the embedding model
   -t <embedding type>  Type of the embedding model - 'fasttext', 'transformer' or 'bert'
+  -g <use gpu>		   Number of GPU to use (from 0 to available GPUs), -1 if use CPU (dfault is -1)
 "
 	echo "$__usage"
 else
-	python ./data_vectorisation/Embeddings.py -i "${infile}" -o "${outfile}" -c "${column}" -m "${embname}" -t "${embtype}"
+	python ./data/data_processing/data_vectorisation/Embeddings.py -i "${infile}" -o "${outfile}" -c "${column}" -m "${embname}" -t "${embtype}" -g "${gpu}"
 fi

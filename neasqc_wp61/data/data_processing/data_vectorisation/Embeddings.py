@@ -12,20 +12,25 @@ import csv
 import argparse
 
 class Embeddings:
-    def __init__(self, path, embtype):
+    def __init__(self, path, embtype, gpu=-1):
         self.embtype=embtype
         self.model=None
-        self.tokenizer=None       
+        self.tokenizer=None      
+
+        self.device = ('cpu' if gpu < 0 else f'cuda:{gpu}')
+        print("Using device: ", self.device)  
+    
         try:
             if (embtype=='fasttext'):
                 if not os.path.exists(path):
                     fasttext.util.download_model('en', if_exists='ignore')     
                 self.model = fasttext.load_model(path)
             elif (embtype == 'bert'):
-                self.model=BertModel.from_pretrained(path, output_hidden_states = True, )
+                self.model=BertModel.from_pretrained(path, output_hidden_states = True, )# BERT did not return vectors if run on GPU .to(self.device)
                 self.tokenizer=BertTokenizer.from_pretrained(path)
             elif (embtype == 'transformer'):
-                self.model=SentenceTransformer(path)
+                
+                self.model=SentenceTransformer(path, self.device)
                 
             print(path + ' loaded!')
         except:
@@ -52,7 +57,7 @@ class Embeddings:
                     attention_mask = torch.tensor(input_masks)
                     
                     with torch.no_grad():
-                        last_hidden_states  = self.model(input_ids, attention_mask=attention_mask)
+                        last_hidden_states  = self.model(input_ids, attention_mask=attention_mask)#.to(self.device)
 
  #The BERT uses [CLS] token to represent sentence information - tensor position [0].
  #See https://github.com/VincentK1991/BERT_summarization_1/blob/master/notebook/Primer_to_BERT_extractive_summarization_March_25_2020.ipynb 
@@ -73,13 +78,15 @@ def main():
     parser.add_argument("-c", "--column", help = "'3' - 3-column file containing class, text and parse tree columns, '0' - if the whole line is text example")
     parser.add_argument("-t", "--mtype", help = "Embedding model type: 'fasttext', 'bert' or 'transformer'")
     parser.add_argument("-m", "--model", help = "Pre-trained embedding model. Some examples: 'cc.en.300.bin' 'bert-base-uncased' 'all-distilroberta-v1'")
+    parser.add_argument("-g", "--gpu", help = "Number of GPU to use (from '0' to available GPUs), '-1' if use CPU (default is '-1')")
     args = parser.parse_args()
 
+  #  os.environ["CUDA_VISIBLE_DEVICES"]=args.gpu    
     dataset = []
     
     try:
         rowlist = open(args.infile).read().splitlines()
-        vc = Embeddings(args.model,args.mtype)
+        vc = Embeddings(args.model,args.mtype, gpu=int(args.gpu))
         
         for i, line in enumerate(rowlist):
             print(f"{i}/{len(rowlist)}")
