@@ -11,14 +11,16 @@ To run each step use the corresponding bash script that is located in the direct
 ### Step 0 - data download
 
 We use the following datasets from the kaggle.com. 
-	- *Reviews.csv* from the <https://www.kaggle.com/datasets/snap/amazon-fine-food-reviews/versions/1>
-	- *labelled_newscatcher_dataset.csv* from the <https://www.kaggle.com/datasets/kotartemiy/topic-labeled-news-dataset>
-	- *RAW_interactions.csv* from the <https://www.kaggle.com/datasets/shuyangli94/food-com-recipes-and-user-interactions?select=RAW_interactions.csv>
-	- *train.csv* <https://www.kaggle.com/datasets/kritanjalijain/amazon-reviews?select=train.csv>
+
+- *Reviews.csv* from the <https://www.kaggle.com/datasets/snap/amazon-fine-food-reviews/versions/1>
+- *labelled_newscatcher_dataset.csv* from the <https://www.kaggle.com/datasets/kotartemiy/topic-labeled-news-dataset>
+- *RAW_interactions.csv* from the <https://www.kaggle.com/datasets/shuyangli94/food-com-recipes-and-user-interactions?select=RAW_interactions.csv>
+- *train.csv* <https://www.kaggle.com/datasets/kritanjalijain/amazon-reviews?select=train.csv>
 
 To retrive the datasets from the kaggle.com you first have to
-	- install kaggle API using command `pip install --user kaggle`
-	- create Kaggle account, create API token, make a directory .kaggle at root ~, and place kaggle.json in that directory.  
+
+- install kaggle API using command `pip install --user kaggle`
+- create Kaggle account, create API token, make a directory .kaggle at root ~, and place kaggle.json in that directory.  
 	
 See instructions in <https://www.endtoend.ai/tutorial/how-to-download-kaggle-datasets-on-ubuntu/>
 
@@ -29,10 +31,10 @@ After run the script `0_FetchDatasets.sh` to download the datasets.
 
 To perform this step run the script *1_Filter6Parse.sh* passing the following parameters:
 
-	- *-i <dataset>*            Dataset file (with path)
-	- *-d <delimiter>*          Field delimiter symbol
-	- *-c <class fiels>*        Name of the class field (only if the first line in the file contains field names)
-	- *-t <text field>*         Name of the text field (only if the first line in the file contains field names)
+- -i <dataset>            Dataset file (with path)
+- -d <delimiter>          Field delimiter symbol
+- -c <class fiels>        Name of the class field (only if the first line in the file contains field names)
+- -t <text field>         Name of the text field (only if the first line in the file contains field names)
 
 Examples:
 
@@ -42,16 +44,16 @@ Examples:
 
 `1_Filter6Parse.sh -i ./data/datasets/labelled_newscatcher_dataset.csv -d ';' -c 'topic' -t 'title'`
 
-Files with syntactic tags `Reviews_alltrees.tsv`, `labelled_newscatcher_dataset_alltrees.tsv`, `RAW_interactions_alltrees.tsv` are included in *./data/datasets* folder.
+Files with syntactic tags `Reviews_alltrees.tsv`, `labelled_newscatcher_dataset_alltrees.tsv`, `RAW_interactions_alltrees.tsv` are included in *../data/datasets* folder.
 
-The name of the dataset *train* in further steps is renamed to *amazonreviews_train* for clarity.
+The name of the dataset *train* in further steps is changed to *amazonreviews_train* for clarity.
 
 ### Step 2 - Selecting data with a certain syntactical structure.
 
 To perform this step run the script *2_FilterSyntacticTrees.sh* passing the following parameters:
 
-	- *-i <input file>*               TAB separated 3-column file to filter
-	- *-f <syntactical trees file>*   File containing list of preferable syntactical tags
+- -i <input file>               TAB separated 3-column file to filter
+- -f <syntactical trees file>   File containing list of preferable syntactical tags
 
 Example:
 
@@ -61,7 +63,7 @@ Example:
 
 To perform this step run the script *3_SplitTrainTestDev.sh* passing the following parameters:
 
-	- *-i <input file>*         TAB separated 3-column filtered file
+- -i <input file>         TAB separated 3-column filtered file
 
 3 files fill be created containing suffix '_train', '_test' and '_dev' in the name.
 
@@ -73,10 +75,10 @@ Example:
 
 To perform this step run the script *4_GetEmbeddings.sh* passing the following parameters:
 
-	- *-i <input file>*      input file with text examples
-	- *-c <column>*          '3' - if 3-column input file containing class, text and parse tree columns, '0' - if the whole line is a text example
-	- *-m <embedding name>*  Name of the embedding model
-	- *-t <embedding type>*  Type of the embedding model - 'fasttext', 'transformer' or 'bert'	
+- -i <input file>      input file with text examples
+- -c <column>          '3' - if 3-column input file containing class, text and parse tree columns, '0' - if the whole line is a text example
+- -m <embedding name>  Name of the embedding model
+- -t <embedding type>  Type of the embedding model - 'fasttext', 'transformer' or 'bert'	
 
 Run this step for all 3 parts of the dataset - train, dev and test.
 
@@ -109,17 +111,17 @@ The folder *./models/classical* contains the source code of a class implementing
 
 To perform this step run the script *5_TrainNNModel.sh* passing the following parameters:
 
-	- *-t <train data file>* Json data file for classifier training (with embeddings)
-	- *-d <dev data file>*   Json data file for classifier validation (with embeddings)
-	- *-f <field>*           Classify by field
-	- *-e <embedding type>*  Embedding type: 'sentence' or 'word'
-	- *-m <model directory>* Directory where to save trained model
+- -t <train data file> Json data file for classifier training (with embeddings)
+- -d <dev data file>   Json data file for classifier validation (with embeddings)
+- -f <field>           Classify by field
+- -e <embedding type>  Embedding type: 'sentence' or 'word'
+- -m <model directory> Directory where to save trained model
 	
 Examples:
 
-`5_TrainNNModel.sh -t ./data/datasets/amazonreview_train_filtered_train_bert-base-cased.json -d ./data/datasets/amazonreview_train_filtered_dev_bert-base-cased.json -f 'class' -e 'sentence' -m ./models/classical/amazonreview_train_bert-cased
+`5_TrainNNModel.sh -t ./data/datasets/amazonreview_train_filtered_train_bert-base-cased.json -d ./data/datasets/amazonreview_train_filtered_dev_bert-base-cased.json -f 'class' -e 'sentence' -m ./models/classical/amazonreview_train_bert-cased`
 
-`5_TrainNNModel.sh -t ./data/datasets/amazonreview_train_filtered_train_all-distilroberta-v1.json -d ./data/datasets/amazonreview_train_filtered_dev_all-distilroberta-v1.json -f 'class' -e 'sentence' -m ./models/classical/amazonreview_train_distilroberta
+`5_TrainNNModel.sh -t ./data/datasets/amazonreview_train_filtered_train_all-distilroberta-v1.json -d ./data/datasets/amazonreview_train_filtered_dev_all-distilroberta-v1.json -f 'class' -e 'sentence' -m ./models/classical/amazonreview_train_distilroberta`
 
 `5_TrainNNModel.sh -t ./data/datasets/amazonreview_train_filtered_train_fasttext.json -d ./data/datasets/amazonreview_train_filtered_dev_fasttext.json -f 'class' -e 'word' -m ./models/classical/amazonreview_train_fasttext`
 
@@ -133,16 +135,16 @@ Examples:
 
 To perform this step run the script *6_ClassifyWithNNModel.sh* passing the following parameters:
 
-	- *-i <input file>* 	 Json data file for classifier testing (with embeddings acquired using script 4_GetEmbeddings.sh)
-	- *-o <output file>*     Result file with predicted classes
-	- *-e <embedding type>*  Embedding type: 'sentence' or 'word'
-	- *-m <model directory>* Directory of pre-tained classifier model
+- -i <input file> 	 Json data file for classifier testing (with embeddings acquired using script 4_GetEmbeddings.sh)
+- -o <output file>     Result file with predicted classes
+- -e <embedding type>  Embedding type: 'sentence' or 'word'
+- -m <model directory> Directory of pre-tained classifier model
 
 Examples:
 
-`6_ClassifyWithNNModel.sh -i ./data/datasets/amazonreview_train_filtered_test_bert-base-uncased.json -o ./benchmarking/results/raw/amazonreview_train_bert-base-uncased.txt -e 'sentence' -m ./models/classical/amazonreview_train_bert-uncased
+`6_ClassifyWithNNModel.sh -i ./data/datasets/amazonreview_train_filtered_test_bert-base-uncased.json -o ./benchmarking/results/raw/amazonreview_train_bert-base-uncased.txt -e 'sentence' -m ./models/classical/amazonreview_train_bert-uncased`
 
-`6_ClassifyWithNNModel.sh -i ./data/datasets/amazonreview_train_filtered_test_all-distilroberta-v1.json -o ./benchmarking/results/raw/amazonreview_train_distilroberta.txt -e 'sentence' -m ./models/classical/amazonreview_train_distilroberta
+`6_ClassifyWithNNModel.sh -i ./data/datasets/amazonreview_train_filtered_test_all-distilroberta-v1.json -o ./benchmarking/results/raw/amazonreview_train_distilroberta.txt -e 'sentence' -m ./models/classical/amazonreview_train_distilroberta`
 
 `6_ClassifyWithNNModel.sh -i ./data/datasets/amazonreview_train_filtered_test_fasttext.json -o ./benchmarking/results/raw/amazonreview_train_fasttext.txt -e 'word' -m ./models/classical/amazonreview_train_fasttext`
 
@@ -154,9 +156,9 @@ Examples:
 
 To perform this step run the script *7_EvaluateResults.sh* passing the following parameters:
 
-	- *-e <expected results file>* Expected results file containing class in the first column and optionaly other columns
-	- *-c <expected results file>* Results acquired using classifier.
-	- *-o <accuracy file>*         File for calculated test accuracy
+- -e <expected results file> Expected results file containing class in the first column and optionaly other columns
+- -c <expected results file> Results acquired using classifier.
+- -o <accuracy file>         File for calculated test accuracy
 
 Example:
 
