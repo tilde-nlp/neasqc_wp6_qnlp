@@ -60,7 +60,7 @@ Example:
 
 `2_FilterSyntacticTrees.sh -i ./data/datasets/amazonreviews_train_alltrees.tsv -f ./data/datasets/validtrees.txt`
 	
-### Step 3 - Split data in train/dev/test parts with proportions 80/10/10.
+### Step 3 - Spliting data in train/dev/test parts with proportions 80/10/10.
 
 To perform this step run the script *3_SplitTrainTestDev.sh* passing the following parameters:
 
@@ -72,7 +72,7 @@ Example:
 
 `3_SplitTrainTestDev.sh -i ./data/datasets/amazonreviews_train_filtered.tsv`
 
-### Step 4 - Acquire embedding vectors using chosen pre-trained embedding model.
+### Step 4 - Acquiring embedding vectors using chosen pre-trained embedding model.
 
 We have experimented with 5 different pre-trained embedding models.
 
@@ -144,7 +144,7 @@ Examples:
 
 #### Quantum NLP
 
-
+????
 
 ### Step 6 - Using classifier.
 
@@ -169,6 +169,7 @@ Examples:
 
 #### Quantum NLP
 
+????
 
 ### Step 7 - Evaluating results.
 

@@ -98,6 +98,22 @@ Some of the tools used in the module require a language model to be donwloaded b
   <pre><code>$ python3.10 -m spacy download en_core_web_lg</pre></code>
 The language model will be stored in the created virtual environment. 
 
+## Workflow
+The full workflow for data preparation, model training and evaluation is divided in the following steps:
+
+  <ul>
+    <li>Step 0 - Data download</li>
+    <li>Step 1 - Tokenizing and parsing datasets using Bobcat parser</li>
+    <li>Step 2 - Selecting data with a certain syntactical structure</li>
+    <li>Step 3 - Spliting data in train/dev/test parts</li>
+    <li>Step 4 - Acquiring embedding vectors using chosen pre-trained embedding model</li>
+    <li>Step 5 - Training model</li>
+    <li>Step 6 - Using classifier</li>
+    <li>Step 7 - Evaluating results</li>
+  </ul>
+  
+*.bash* files for each step are included in [neasqc_wp61](./neasqc_wp61/) subdirectory. The detailed description of each step is included in [doc](./neasqc_wp61/doc/) subdirectory.
+
 ## Running the notebooks
 We can use jupyter notebook to run the jupyter notebooks that appear on the repository. To do so, we can run the following command:
  <pre>
@@ -111,19 +127,21 @@ We can use jupyter notebook to run the jupyter notebooks that appear on the repo
 The first command will define a kernel, named <kernel_name>, which you must change to after opening jupyter notebook. The second command will open a jupyter notebook terminal on our explorer, where we can run the selected notebook.
 We will give now instructions for running each one of the notebooks, depending on the datasets that we want to use in our models. 
 
-### [Classical_classifiers.ipynb](//repo//WP6_QNLP/neasqc_wp61/doc/tutorials/Classical_classifiers.ipynb)
+### [Prepare_datasets_4classifier.ipynb](//repo//WP6_QNLP/neasqc_wp61/doc/tutorials/Prepare_datasets_4classifier.ipynb)
+This notebook prepares data for classifier training. First, you have to get the dataset for experiments (.csv file containing column for class and column containing the text to classify).
+
   <ul>
-    <li>In cell[2], the argument of <code>loadData()</code> must be one of the following:
-      <ul>
-        <li><code>"../../data/dataset_vectorized_bert_uncased.json"</code></li>
-        <li><code>"../../data/dataset_vectorized_bert_cased.json"</code></li>
-      </ul>
-    </li>
-    <li>In cell[8], the argument of <code>loadData()</code> must be:
-      <ul>
-        <li><code>"../../data/dataset_vectorized_fasttext.json"</code></li>
-      </ul>
-    </li>
+    <li>In cell[3], set the name of the dataset</li>
+    <li>In cell[5], set the delimiter symbol and the field names for the class field and the text field.</li>
+  </ul>
+
+### [Classical_classifiers.ipynb](//repo//WP6_QNLP/neasqc_wp61/doc/tutorials/Classical_classifiers.ipynb)
+This notebook can be run after you prepare data with *Prepare_datasets_4classifier.ipynb*.
+
+This notebook uses files with embedding vectors, file names are in a form *\<dataset name\>_\<embedding name\>.json*
+
+  <ul>
+    <li>In cell[2], set the name of the dataset</li>
   </ul>
 
 
@@ -177,7 +195,7 @@ The main scope of the pre-alpha model is to build a variational quantum algorith
 Some classical classifiers are implemented in order to have a reference against which to compare our quantum solution.
 <ul>
   <li>K-nearest neighbors classifier from sklearn package applied to BERT embeddings.</li>
-  <li>A feedforward neural network classifier from tensorflow package applied to BERT embeddings.</li>
+  <li>A feedforward neural network classifiers from tensorflow package applied to BERT or sentence transformers embeddings.</li>
   <li>A convolutional neural network classifier from tensorflow package applied to fasttext embeddings.</li>
 </ul>
 
@@ -196,7 +214,9 @@ As an additional feature, a function that guesses a missing word in a sentence i
 
 Let's briefly describe how the functionalities explained above are implemented. 
 
-The classical classifiers are implemented in the notebook [Classical classifiers.ipynb](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/doc/tutorials/Classical_classifiers.ipynb). The file [NNClassifier.py](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/models/classical/NNClassifier.py) contains the class and functions used to prepare the data, build and train the convolutional and feedforward networks. 
+The data preparation for the classifier is implemented in the notebook [Prepare_datasets_4classifier.ipynb](https://github.com/tilde-nlp/neasqc_wp6_qnlp/tree/classical-nlp-models/neasqc_wp61/doc/tutorials/Prepare_datasets_4classifier.ipynb).
+
+The classical classifiers are implemented in the notebook [Classical classifiers.ipynb](https://github.com/tilde-nlp/neasqc_wp6_qnlp/tree/classical-nlp-models/neasqc_wp61/doc/tutorials/Classical_classifiers.ipynb). The file [NNClassifier.py](https://github.com/tilde-nlp/neasqc_wp6_qnlp/tree/classical-nlp-models/neasqc_wp61/models/classical/NNClassifier.py) contains the class and functions used to prepare the data, build and train the convolutional and feedforward networks. 
 
 Regarding the variational quantum circuit, in the notebook [Single_sentence_example.ipynb](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/doc/tutorials/Single_sentence_example.ipynb) we can find an example where the circuit parameters are optimized based on only one sentence. In the notebook [Dataset_example.ipynb](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/doc/tutorials/Dataset_example.ipynb), we can find an example on the variational algorithm trained with a whole dataset of sentences. We also can see there the implementation of a function to guess a missing word in a sentence. 
 
@@ -266,11 +286,11 @@ The notebooks for the classical NLP module are located in the
 
 ### Vectorizer
 
-Services are found [here](./neasqc_wp61/benchmarking/data_processing/) for vectorizing using pretrained word embeddings.
+Services are found [here](./neasqc_wp61/data/data_processing/vectorising/) for vectorizing using pretrained word embeddings.
 
 The aim is to have vectorizing service detached from the rest of the library so that different vectorizing methods can easily be tested using the same interface.
 
-Currently, vectorizing with `BERT` and `fastText` models are implemented.
+Currently, vectorizing with `BERT`, `fastText` and `sentence transformer` models are implemented.
 
 ### Dataset Generation Example
 
