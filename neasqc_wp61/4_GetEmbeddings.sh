@@ -42,5 +42,12 @@ Options:
 "
 	echo "$__usage"
 else
-	python ./data/data_processing/data_vectorisation/Embeddings.py -i "${infile}" -o "${outfile}" -c "${column}" -m "${embname}" -t "${embtype}" -g "${gpu}"
+if [[ "$gpu" == "-1" ]]
+then
+	visibledev=""
+else
+	visibledev=$gpu
+fi
+echo $visibledev
+	CUDA_VISIBLE_DEVICES=$visibledev python ./data/data_processing/data_vectorisation/Embeddings.py -i "${infile}" -o "${outfile}" -c "${column}" -m "${embname}" -t "${embtype}" -g "${gpu}"
 fi

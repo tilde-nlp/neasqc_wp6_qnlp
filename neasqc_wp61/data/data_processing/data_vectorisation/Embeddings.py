@@ -17,7 +17,8 @@ class Embeddings:
         self.model=None
         self.tokenizer=None      
 
-        self.device = ('cpu' if gpu < 0 else f'cuda:{gpu}')
+        #self.device = ('cpu' if gpu < 0 else f'cuda:{gpu}')
+        self.device = ('cpu' if gpu < 0 else f'cuda')
         print("Using device: ", self.device)  
     
         try:
@@ -26,7 +27,7 @@ class Embeddings:
                     fasttext.util.download_model('en', if_exists='ignore')     
                 self.model = fasttext.load_model(path)
             elif (embtype == 'bert'):
-                self.model=BertModel.from_pretrained(path, output_hidden_states = True, )# BERT did not return vectors if run on GPU .to(self.device)
+                self.model=BertModel.from_pretrained(path, output_hidden_states = True, ).to(self.device)
                 self.tokenizer=BertTokenizer.from_pretrained(path)
             elif (embtype == 'transformer'):
                 
@@ -53,21 +54,21 @@ class Embeddings:
                     input_ids = pad_sequences(input_tokens, maxlen=50, dtype="long", value=0, truncating="post", padding="post")
                     input_masks = []
                     input_masks.append([int(token_id > 0) for token_id in input_ids[0]])
-                    input_ids = torch.tensor(input_ids)
-                    attention_mask = torch.tensor(input_masks)
-                    
+                    input_ids = torch.tensor(input_ids, device=self.device)
+                    attention_mask = torch.tensor(input_masks, device=self.device)
+                    if self.device != 'cpu':
+                        self.model = self.model.cuda()
                     with torch.no_grad():
-                        last_hidden_states  = self.model(input_ids, attention_mask=attention_mask)#.to(self.device)
+                        last_hidden_states  = self.model(input_ids, attention_mask=attention_mask)
 
  #The BERT uses [CLS] token to represent sentence information - tensor position [0].
  #See https://github.com/VincentK1991/BERT_summarization_1/blob/master/notebook/Primer_to_BERT_extractive_summarization_March_25_2020.ipynb 
-                      
-                    embvec = [last_hidden_states[0][0,0,:].detach().numpy().tolist()]
+                    embvec = [last_hidden_states[0][0,0,:].cpu().detach().numpy().tolist()]
                 elif (self.embtype=='transformer'):
                     res = self.model.encode([sentence])
                     embvec = [res.tolist()[0]]
-        except:
-            print('Failed to get embeddings for sentence: ' + sentence)
+        except Exception as err:
+            print(f"Unexpected {err=}")
         return embvec
         
 def main():

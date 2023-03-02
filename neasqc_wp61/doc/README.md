@@ -31,11 +31,11 @@ After run the script `0_FetchDatasets.sh` to download the datasets.
 
 To perform this step run the script *1_Filter6Parse.sh* passing the following parameters:
 
-- -i <dataset>            Dataset file (with path)
-- -d <delimiter>          Field delimiter symbol
-- -c <class fiels>        Name of the class field (only if the first line in the file contains field names)
-- -t <text field>         Name of the text field (only if the first line in the file contains field names)
-- -g <gpu use>            Number of GPU to use (from 0 to available GPUs), -1 if use CPU (dfault is -1)
+- -i \<dataset\>            Dataset file (with path)
+- -d \<delimiter\>          Field delimiter symbol
+- -c \<class fiels\>        Name of the class field (only if the first line in the file contains field names)
+- -t \<text field\>         Name of the text field (only if the first line in the file contains field names)
+- -g \<gpu use\>            Number of GPU to use (from 0 to available GPUs), -1 if use CPU (default is -1)
 
 Examples:
 
@@ -53,8 +53,8 @@ The name of the dataset *train* in further steps is changed to *amazonreviews_tr
 
 To perform this step run the script *2_FilterSyntacticTrees.sh* passing the following parameters:
 
-- -i <input file>               TAB separated 3-column file to filter
-- -f <syntactical trees file>   File containing list of preferable syntactical tags
+- -i \<input file\>               TAB separated 3-column file to filter
+- -f \<syntactical trees file\>   File containing list of preferable syntactical tags
 
 Example:
 
@@ -64,7 +64,7 @@ Example:
 
 To perform this step run the script *3_SplitTrainTestDev.sh* passing the following parameters:
 
-- -i <input file>         TAB separated 3-column filtered file
+- -i \<input file\>         TAB separated 3-column filtered file
 
 3 files fill be created containing suffix '_train', '_test' and '_dev' in the name.
 
@@ -74,22 +74,37 @@ Example:
 
 ### Step 4 - Acquire embedding vectors using chosen pre-trained embedding model.
 
+We have experimented with 5 different pre-trained embedding models.
+
+|   | Pre-trained model      | Embedding type | Vectors for unit | About model                                                                                                                                                                                        |
+|---|------------------------|----------------|------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|   | *cc.en.300.bin*        | fasttext       | word             | Model trained on Common Crawl and Wikipedia using fastText.<br><https://fasttext.cc/docs/en/crawl-vectors.html>                                                                                    |
+|   | *all-mpnet-base-v2*    | transformer    | sentence         | The best among the sentence transformers general purpose model trained on all available training data (more than 1 billion training pairs).<br><https://www.sbert.net/docs/pretrained_models.html> |
+|   | *all-distilroberta-v1* | transformer    | sentence         | The third best sentence transformers model, faster that *all-mpnet-base-v2*.<br><https://www.sbert.net/docs/pretrained_models.html>                                                                |
+|   | *bert-base-uncased*    | bert           | sentence         | Case insensitive model pretrained on BookCorpus (consisting of 11,038 unpublished books) and English Wikipedia.<br><https://huggingface.co/bert-base-uncased>                                      |
+|   | *bert-base-cased*      | bert           | sentence         | Model pretrained on BookCorpus (consisting of 11,038 unpublished books) and English Wikipedia.<br><https://huggingface.co/bert-base-cased>                                                         |
+
+Bert models are older; and they are slower that sentence transformer models.
+
 To perform this step run the script *4_GetEmbeddings.sh* passing the following parameters:
 
 - -i <input file>      input file with text examples
 - -c <column>          '3' - if 3-column input file containing class, text and parse tree columns, '0' - if the whole line is a text example
 - -m <embedding name>  Name of the embedding model
 - -t <embedding type>  Type of the embedding model - 'fasttext', 'transformer' or 'bert'	
+- -g <gpu use>         Number of GPU to use (from 0 to available GPUs), -1 if use CPU (default is -1)
+
+Fasttext model works only on CPU.
 
 Run this step for all 3 parts of the dataset - train, dev and test.
 
 Example:
 
-`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_train.tsv -c '3' -m 'all-distilroberta-v1' -t 'transformer'`
+`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_train.tsv -c '3' -m 'all-distilroberta-v1' -t 'transformer' -g '0'`
 
-`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_test.tsv -c '3' -m 'all-distilroberta-v1' -t 'transformer'`
+`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_test.tsv -c '3' -m 'all-distilroberta-v1' -t 'transformer' -g '0'`
 
-`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_dev.tsv -c '3' -m 'all-distilroberta-v1' -t 'transformer'`
+`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_dev.tsv -c '3' -m 'all-distilroberta-v1' -t 'transformer' -g '0'`
 
 `4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_train.tsv -c '3' -m 'cc.en.300.bin' -t 'fasttext'`
 
@@ -97,11 +112,11 @@ Example:
 
 `4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_dev.tsv -c '3' -m 'cc.en.300.bin' -t 'fasttext'`
 
-`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_train.tsv -c '3' -m 'bert-base-uncased' -t 'bert'`
+`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_train.tsv -c '3' -m 'bert-base-uncased' -t 'bert' -g '0'`
 
-`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_test.tsv -c '3' -m 'bert-base-uncased' -t 'bert'`
+`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_test.tsv -c '3' -m 'bert-base-uncased' -t 'bert' -g '0'`
 
-`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_dev.tsv -c '3' -m 'bert-base-uncased' -t 'bert'`
+`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_dev.tsv -c '3' -m 'bert-base-uncased' -t 'bert' -g '0'`
 
 
 ### Step 5 - Training model.
@@ -112,12 +127,12 @@ The folder *./models/classical* contains the source code of a class implementing
 
 To perform this step run the script *5_TrainNNModel.sh* passing the following parameters:
 
-- -t <train data file> Json data file for classifier training (with embeddings)
-- -d <dev data file>   Json data file for classifier validation (with embeddings)
-- -f <field>           Classify by field
-- -e <embedding type>  Embedding type: 'sentence' or 'word'
-- -m <model directory> Directory where to save trained model
-- -g <gpu use>         Number of GPU to use (from 0 to available GPUs), -1 if use CPU (dfault is -1)
+- -t \<train data file\> Json data file for classifier training (with embeddings)
+- -d \<dev data file\>   Json data file for classifier validation (with embeddings)
+- -f \<field\>           Classify by field
+- -e \<embedding unit\>  Embedding unit: 'sentence' or 'word'
+- -m \<model directory\> Directory where to save trained model
+- -g \<gpu use\>         Number of GPU to use (from 0 to available GPUs), -1 if use CPU (default is -1)
 	
 Examples:
 
@@ -137,11 +152,11 @@ Examples:
 
 To perform this step run the script *6_ClassifyWithNNModel.sh* passing the following parameters:
 
-- -i <input file> 	   Json data file for classifier testing (with embeddings acquired using script 4_GetEmbeddings.sh)
-- -o <output file>     Result file with predicted classes
-- -e <embedding type>  Embedding type: 'sentence' or 'word'
-- -m <model directory> Directory of pre-tained classifier model
-- -g <gpu use>         Number of GPU to use (from 0 to available GPUs), -1 if use CPU (dfault is -1)
+- -i \<input file\> 	   Json data file for classifier testing (with embeddings acquired using script 4_GetEmbeddings.sh)
+- -o \<output file\>     Result file with predicted classes
+- -e \<embedding unit\>  Embedding unit: 'sentence' or 'word'
+- -m \<model directory\> Directory of pre-tained classifier model
+- -g \<gpu use\>         Number of GPU to use (from 0 to available GPUs), -1 if use CPU (default is -1)
 
 Examples:
 
@@ -159,9 +174,9 @@ Examples:
 
 To perform this step run the script *7_EvaluateResults.sh* passing the following parameters:
 
-- -e <expected results file> Expected results file containing class in the first column and optionaly other columns
-- -c <expected results file> Results acquired using classifier.
-- -o <accuracy file>         File for calculated test accuracy
+- -e \<expected results file\> Expected results file containing class in the first column and optionaly other columns
+- -c \<expected results file\> Results acquired using classifier.
+- -o \<accuracy file\>         File for calculated test accuracy
 
 Example:
 
