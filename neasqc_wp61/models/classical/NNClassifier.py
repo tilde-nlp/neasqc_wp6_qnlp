@@ -38,7 +38,7 @@ class NNClassifier:
         }
         if "model" in kwargs and kwargs["model"] == "CNN": #defaults for CNN
             self.params["epochs"] = 30
-            self.params["filterCounts"] = [300, 300]
+            self.params["filterCounts"] = [self.params["vectorSpaceSize"], self.params["vectorSpaceSize"]]
             self.params["maxSentenceLen"] = 6
             self.params["dropout"] = 0.5
 
@@ -340,9 +340,11 @@ def main():
     data = loadData(args.input)
 	
     if args.type == "word":
-        classifier = NNClassifier(model='CNN',vectorSpaceSize=300)
         maxLen = 6
         trainX, trainY, testX, testY = prepareTrainTestXYWords(data, maxLen, args.field)
+        vecsize = len(trainX[0])
+        print(F"Vec size: {vecsize}")
+        classifier = NNClassifier(model='CNN',vectorSpaceSize=vecsize)
     elif args.type == "sentence":
         classifier = NNClassifier()
         trainX, trainY, testX, testY = prepareTrainTestXYSentence(data, args.field)

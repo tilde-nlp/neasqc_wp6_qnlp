@@ -91,32 +91,35 @@ To perform this step run the script *4_GetEmbeddings.sh* passing the following p
 - -i <input file>      input file with text examples
 - -c <column>          '3' - if 3-column input file containing class, text and parse tree columns, '0' - if the whole line is a text example
 - -m <embedding name>  Name of the embedding model
-- -t <embedding type>  Type of the embedding model - 'fasttext', 'transformer' or 'bert'	
+- -t <embedding model type>  Type of the embedding model - 'fasttext', 'transformer' or 'bert'	
+- -e <embedding unit>  Embedding unit: 'sentence' or 'word'	
 - -g <gpu use>         Number of GPU to use (from 0 to available GPUs), -1 if use CPU (default is -1)
 
 Fasttext model works only on CPU.
+
+Embedding unit is 'word' or 'sentence' for the 'bert' models; 'word' for the 'fasttext' model; 'sentence' for the 'transformer' models. 
 
 Run this step for all 3 parts of the dataset - train, dev and test.
 
 Example:
 
-`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_train.tsv -c '3' -m 'all-distilroberta-v1' -t 'transformer' -g '0'`
+`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_train.tsv -c '3' -m 'all-distilroberta-v1' -t 'transformer' -e 'sentence' -g '0'`
 
-`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_test.tsv -c '3' -m 'all-distilroberta-v1' -t 'transformer' -g '0'`
+`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_test.tsv -c '3' -m 'all-distilroberta-v1' -t 'transformer' -e 'sentence' -g '0'`
 
-`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_dev.tsv -c '3' -m 'all-distilroberta-v1' -t 'transformer' -g '0'`
+`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_dev.tsv -c '3' -m 'all-distilroberta-v1' -t 'transformer' -e 'sentence' -g '0'`
 
-`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_train.tsv -c '3' -m 'cc.en.300.bin' -t 'fasttext'`
+`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_train.tsv -c '3' -m 'cc.en.300.bin' -t 'fasttext' -e 'word'`
 
-`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_test.tsv -c '3' -m 'cc.en.300.bin' -t 'fasttext'`
+`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_test.tsv -c '3' -m 'cc.en.300.bin' -t 'fasttext' -e 'word'`
 
-`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_dev.tsv -c '3' -m 'cc.en.300.bin' -t 'fasttext'`
+`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_dev.tsv -c '3' -m 'cc.en.300.bin' -t 'fasttext' -e 'word'`
 
-`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_train.tsv -c '3' -m 'bert-base-uncased' -t 'bert' -g '0'`
+`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_train.tsv -c '3' -m 'bert-base-uncased' -t 'bert' -e 'sentence' -g '0'`
 
-`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_test.tsv -c '3' -m 'bert-base-uncased' -t 'bert' -g '0'`
+`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_test.tsv -c '3' -m 'bert-base-uncased' -t 'bert' -e 'sentence' -g '0'`
 
-`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_dev.tsv -c '3' -m 'bert-base-uncased' -t 'bert' -g '0'`
+`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_dev.tsv -c '3' -m 'bert-base-uncased' -t 'bert' -e 'sentence' -g '0'`
 
 
 ### Step 5 - Training model.
@@ -223,11 +226,14 @@ Test examples has the following syntactical structure:
 
 Dataset *labelled_newscatcher_dataset* has only 12 examples and *RAW_interactions* has only 77 examples after filtering. As the number of examples is too small models are not trained for these datasets.
 
-|                                                                                                                    | review.tsv<br>(train: 1596, dev: 199, test: 199)<br>5 classes | amazonreview_train.tsv<br>(train: 16853, dev: 2107, test: 2107)<br>2 classes |
-|--------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------|------------------------------------------------------------------------------|
-| fastText word emb.: *cc.en.300.bin*<br>NN model type: Convolutional network (max sentence length 6)                | Train accuracy: 0.9411<br>Test accuracy: 0.6985               | Train accuracy: 0.9576<br>Test accuracy: 0.8330                              |
-| Transformer sentence emb.: *all-mpnet-base-v2*<br>NN model type: Shallow feedforward neural network                | Train accuracy: 0.7757<br>Test accuracy: 0.7387               | Train accuracy: 0.8746<br>Test accuracy: 0.8647                              |
-| Transformer sentence emb.: *all-distilroberta-v1*<br>NN model type: Shallow feedforward neural network             | Train accuracy: 0.7726<br>Test accuracy: 0.7186               | Train accuracy: 0.8590<br>Test accuracy: 0.8420                              |
-| BERT word emb.: *bert-base-uncased*<br>NN model type: Shallow feedforward neural network                           | Train accuracy: 0.8189<br>Test accuracy: 0.6533               | Train accuracy: 0.8353<br>Test accuracy: 0.8287                              |
-| BERT word emb.: *bert-base-cased*<br>NN model type: Shallow feedforward neural network                             | Train accuracy: 0.8020<br>Test accuracy: 0.6533               | Train accuracy: 0.8044<br>Test accuracy: 0.7902                              |
+|                                                                                                                    | reviews.tsv<br>(train: 1596, dev: 199, test: 199)<br>5 classes | amazonreview_train.tsv<br>(train: 16853, dev: 2107, test: 2107)<br>2 classes |
+|--------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------|------------------------------------------------------------------------------|
+| fastText word emb.: *cc.en.300.bin*<br>NN model type: Convolutional network (max sentence length 6)                | Train accuracy: 0.9411<br>Test accuracy: 0.6985                | Train accuracy: 0.9576<br>Test accuracy: 0.8330                              |
+| Transformer sentence emb.: *all-mpnet-base-v2*<br>NN model type: Shallow feedforward neural network                | Train accuracy: 0.7757<br>Test accuracy: 0.7387                | Train accuracy: 0.8746<br>Test accuracy: 0.8647                              |
+| Transformer sentence emb.: *all-distilroberta-v1*<br>NN model type: Shallow feedforward neural network             | Train accuracy: 0.7726<br>Test accuracy: 0.7186                | Train accuracy: 0.8590<br>Test accuracy: 0.8420                              |
+| BERT sentence emb.: *bert-base-uncased*<br>NN model type: Shallow feedforward neural network                       | Train accuracy: 0.8189<br>Test accuracy: 0.6533                | Train accuracy: 0.8353<br>Test accuracy: 0.8287                              |
+| BERT sentence emb.: *bert-base-cased*<br>NN model type: Shallow feedforward neural network                         | Train accuracy: 0.8020<br>Test accuracy: 0.6533                | Train accuracy: 0.8044<br>Test accuracy: 0.7902                              |
+| BERT word emb.: *bert-base-uncased*<br>NN model type: Shallow feedforward neural network                           | Train accuracy: 0.8791<br>Test accuracy: 0.6683                | Train accuracy: 0.8838<br>Test accuracy: 0.8396                              |
+| BERT word emb.: *bert-base-cased*<br>NN model type: Shallow feedforward neural network                             | Train accuracy: 0.8847<br>Test accuracy: 0.5678                | Train accuracy: 0.8740<br>Test accuracy: 0.8187                              |
+
 

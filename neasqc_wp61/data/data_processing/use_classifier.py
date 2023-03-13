@@ -3,7 +3,7 @@
 import sys
 import argparse
 import numpy as np
-sys.path.append("../../models/classical/")
+sys.path.append("./models/classical/")
 from NNClassifier import (loadData, NNClassifier, prepareXWords, prepareXSentence)
 
  

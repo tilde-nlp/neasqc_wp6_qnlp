@@ -25,9 +25,11 @@ def main():
         idxdict = prepareClassValueDict(traindata, args.field)
             
         if args.etype == "word":
-            classifier = NNClassifier(model='CNN',vectorSpaceSize=300, gpu=int(args.gpu))
             maxLen = 6
             trainX, trainY = prepareXYWords(traindata, maxLen, args.field, idxdict)
+            vecsize = len(trainX[0][0])
+            print(F"Vec size: {vecsize}")
+            classifier = NNClassifier(model='CNN',vectorSpaceSize=vecsize, gpu=int(args.gpu))
             devX, devY = prepareXYWords(devdata, maxLen, args.field)
         elif args.etype == "sentence":
             classifier = NNClassifier(gpu=int(args.gpu))

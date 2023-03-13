@@ -12,11 +12,11 @@ import csv
 import argparse
 
 class Embeddings:
-    def __init__(self, path, embtype, gpu=-1):
+    def __init__(self, path, embtype, etype='sentence', gpu=-1):
         self.embtype=embtype
         self.model=None
         self.tokenizer=None      
-
+        self.etype=etype
         #self.device = ('cpu' if gpu < 0 else f'cuda:{gpu}')
         self.device = ('cpu' if gpu < 0 else f'cuda')
         print("Using device: ", self.device)  
@@ -38,7 +38,30 @@ class Embeddings:
             print('Failed to load ' + path)
         pass
 
- 
+    def getBertEmbeddingVector(self, sentence):
+        embvec=[]
+        try:
+            if self.model:
+                input_tokens = []
+                encodedsent = self.tokenizer.tokenize("[CLS] " + sentence + " [SEP]")
+                input_tokens.append(self.tokenizer.convert_tokens_to_ids(encodedsent))
+                input_ids = pad_sequences(input_tokens, maxlen=50, dtype="long", value=0, truncating="post", padding="post")
+                input_masks = []
+                input_masks.append([int(token_id > 0) for token_id in input_ids[0]])
+                input_ids = torch.tensor(input_ids, device=self.device)
+                attention_mask = torch.tensor(input_masks, device=self.device)
+                if self.device != 'cpu':
+                    self.model = self.model.cuda()
+                with torch.no_grad():
+                    last_hidden_states  = self.model(input_ids, attention_mask=attention_mask)
+
+ #The BERT uses [CLS] token to represent sentence information - tensor position [0].
+ #See https://github.com/VincentK1991/BERT_summarization_1/blob/master/notebook/Primer_to_BERT_extractive_summarization_March_25_2020.ipynb 
+                embvec = [last_hidden_states[0][0,0,:].cpu().detach().numpy().tolist()]
+        except Exception as err:
+            print(f"Unexpected {err=}")
+        return embvec
+        
     def getEmbeddingVector(self, sentence):
         embvec=[]
         try:
@@ -48,22 +71,11 @@ class Embeddings:
                     if (len(words)>0):
                         embvec = [{'word': w, 'vector': self.model.get_word_vector(w).tolist()} for w in words]
                 elif (self.embtype=='bert'):
-                    input_tokens = []
-                    encodedsent = self.tokenizer.tokenize("[CLS] " + sentence + " [SEP]")
-                    input_tokens.append(self.tokenizer.convert_tokens_to_ids(encodedsent))
-                    input_ids = pad_sequences(input_tokens, maxlen=50, dtype="long", value=0, truncating="post", padding="post")
-                    input_masks = []
-                    input_masks.append([int(token_id > 0) for token_id in input_ids[0]])
-                    input_ids = torch.tensor(input_ids, device=self.device)
-                    attention_mask = torch.tensor(input_masks, device=self.device)
-                    if self.device != 'cpu':
-                        self.model = self.model.cuda()
-                    with torch.no_grad():
-                        last_hidden_states  = self.model(input_ids, attention_mask=attention_mask)
-
- #The BERT uses [CLS] token to represent sentence information - tensor position [0].
- #See https://github.com/VincentK1991/BERT_summarization_1/blob/master/notebook/Primer_to_BERT_extractive_summarization_March_25_2020.ipynb 
-                    embvec = [last_hidden_states[0][0,0,:].cpu().detach().numpy().tolist()]
+                    if self.etype=='word':
+                        words = sentence.split()
+                        embvec = [{'word': w, 'vector': self.getBertEmbeddingVector(w)[0]} for w in words]
+                    else:
+                        embvec = self.getBertEmbeddingVector(sentence)
                 elif (self.embtype=='transformer'):
                     res = self.model.encode([sentence])
                     embvec = [res.tolist()[0]]
@@ -78,6 +90,7 @@ def main():
     parser.add_argument("-o", "--outfile", help = "json file with embeddings")
     parser.add_argument("-c", "--column", help = "'3' - 3-column file containing class, text and parse tree columns, '0' - if the whole line is text example")
     parser.add_argument("-t", "--mtype", help = "Embedding model type: 'fasttext', 'bert' or 'transformer'")
+    parser.add_argument("-e", "--etype", help = "Embedding type: sentence or word")
     parser.add_argument("-m", "--model", help = "Pre-trained embedding model. Some examples: 'cc.en.300.bin' 'bert-base-uncased' 'all-distilroberta-v1'")
     parser.add_argument("-g", "--gpu", help = "Number of GPU to use (from '0' to available GPUs), '-1' if use CPU (default is '-1')")
     args = parser.parse_args()
@@ -86,8 +99,8 @@ def main():
     dataset = []
     
     try:
-        rowlist = open(args.infile).read().splitlines()
-        vc = Embeddings(args.model,args.mtype, gpu=int(args.gpu))
+        rowlist = open(args.infile,encoding="utf-8").read().splitlines()
+        vc = Embeddings(args.model,args.mtype, args.etype, gpu=int(args.gpu))
         
         for i, line in enumerate(rowlist):
             print(f"{i}/{len(rowlist)}")
