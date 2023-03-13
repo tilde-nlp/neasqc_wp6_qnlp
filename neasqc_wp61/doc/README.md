@@ -81,8 +81,8 @@ We have experimented with 5 different pre-trained embedding models.
 |   | *cc.en.300.bin*        | fasttext       | word             | Model trained on Common Crawl and Wikipedia using fastText.<br><https://fasttext.cc/docs/en/crawl-vectors.html>                                                                                    |
 |   | *all-mpnet-base-v2*    | transformer    | sentence         | The best among the sentence transformers general purpose model trained on all available training data (more than 1 billion training pairs).<br><https://www.sbert.net/docs/pretrained_models.html> |
 |   | *all-distilroberta-v1* | transformer    | sentence         | The third best sentence transformers model, faster that *all-mpnet-base-v2*.<br><https://www.sbert.net/docs/pretrained_models.html>                                                                |
-|   | *bert-base-uncased*    | bert           | sentence         | Case insensitive model pretrained on BookCorpus (consisting of 11,038 unpublished books) and English Wikipedia.<br><https://huggingface.co/bert-base-uncased>                                      |
-|   | *bert-base-cased*      | bert           | sentence         | Model pretrained on BookCorpus (consisting of 11,038 unpublished books) and English Wikipedia.<br><https://huggingface.co/bert-base-cased>                                                         |
+|   | *bert-base-uncased*    | bert           | sentence, word   | Case insensitive model pretrained on BookCorpus (consisting of 11,038 unpublished books) and English Wikipedia.<br><https://huggingface.co/bert-base-uncased>                                      |
+|   | *bert-base-cased*      | bert           | sentence, word   | Model pretrained on BookCorpus (consisting of 11,038 unpublished books) and English Wikipedia.<br><https://huggingface.co/bert-base-cased>                                                         |
 
 Bert models are older; and they are slower that sentence transformer models.
 
@@ -207,8 +207,8 @@ Test examples has the following syntactical structure:
 | fastText word emb.: *cc.en.300.bin*<br>NN model type: Convolutional network (max sentence length 6)                | Train accuracy: 0.8677<br>Test accuracy: 0.7223       | Train accuracy: 0.6111<br>Test accuracy: 0.9929                         | Train accuracy: 0.9106<br>Test accuracy: 0.8303                     |
 | Transformer sentence emb.: *all-mpnet-base-v2*<br>NN model type: Shallow feedforward neural network                | Train accuracy: 0.7531<br>Test accuracy: 0.7426       | Train accuracy: 0.9366<br>Test accuracy: 0.7222                         | Train accuracy: 0.8400<br>Test accuracy: 0.8344                     |
 | Transformer sentence emb.: *all-distilroberta-v1*<br>NN model type: Shallow feedforward neural network             | Train accuracy: 0.7465<br>Test accuracy: 0.7330       | Train accuracy: 0.9366<br>Test accuracy: 0.7777                         | Train accuracy: 0.8264<br>Test accuracy: 0.8231                     |
-| BERT word emb.: *bert-base-uncased*<br>NN model type: Shallow feedforward neural network                           | Train accuracy: 0.7385<br>Test accuracy: 0.7256       | Train accuracy: 0.9929<br>Test accuracy: 0.7777                         | Train accuracy: 0.8115<br>Test accuracy: 0.8073                     |
-| BERT word emb.: *bert-base-cased*<br>NN model type: Shallow feedforward neural network                             | Train accuracy: 0.7324<br>Test accuracy: 0.7163       | Train accuracy: 1.0000<br>Test accuracy: 0.7222                         | Train accuracy: 0.7810<br>Test accuracy: 0.7788                     |
+| BERT sentence emb.: *bert-base-uncased*<br>NN model type: Shallow feedforward neural network                       | Train accuracy: 0.7385<br>Test accuracy: 0.7256       | Train accuracy: 0.9929<br>Test accuracy: 0.7777                         | Train accuracy: 0.8115<br>Test accuracy: 0.8073                     |
+| BERT sentence emb.: *bert-base-cased*<br>NN model type: Shallow feedforward neural network                         | Train accuracy: 0.7324<br>Test accuracy: 0.7163       | Train accuracy: 1.0000<br>Test accuracy: 0.7222                         | Train accuracy: 0.7810<br>Test accuracy: 0.7788                     |
 
 ### Results for data with sentences
 
@@ -233,7 +233,7 @@ Dataset *labelled_newscatcher_dataset* has only 12 examples and *RAW_interaction
 | Transformer sentence emb.: *all-distilroberta-v1*<br>NN model type: Shallow feedforward neural network             | Train accuracy: 0.7726<br>Test accuracy: 0.7186                | Train accuracy: 0.8590<br>Test accuracy: 0.8420                              |
 | BERT sentence emb.: *bert-base-uncased*<br>NN model type: Shallow feedforward neural network                       | Train accuracy: 0.8189<br>Test accuracy: 0.6533                | Train accuracy: 0.8353<br>Test accuracy: 0.8287                              |
 | BERT sentence emb.: *bert-base-cased*<br>NN model type: Shallow feedforward neural network                         | Train accuracy: 0.8020<br>Test accuracy: 0.6533                | Train accuracy: 0.8044<br>Test accuracy: 0.7902                              |
-| BERT word emb.: *bert-base-uncased*<br>NN model type: Shallow feedforward neural network                           | Train accuracy: 0.8791<br>Test accuracy: 0.6683                | Train accuracy: 0.8838<br>Test accuracy: 0.8396                              |
-| BERT word emb.: *bert-base-cased*<br>NN model type: Shallow feedforward neural network                             | Train accuracy: 0.8847<br>Test accuracy: 0.5678                | Train accuracy: 0.8740<br>Test accuracy: 0.8187                              |
+| BERT word emb.: *bert-base-uncased*<br>NN model type: Convolutional network (max sentence length 6)                | Train accuracy: 0.8791<br>Test accuracy: 0.6683                | Train accuracy: 0.8838<br>Test accuracy: 0.8396                              |
+| BERT word emb.: *bert-base-cased*<br>NN model type: Convolutional network (max sentence length 6)                  | Train accuracy: 0.8847<br>Test accuracy: 0.5678                | Train accuracy: 0.8740<br>Test accuracy: 0.8187                              |
 
 
