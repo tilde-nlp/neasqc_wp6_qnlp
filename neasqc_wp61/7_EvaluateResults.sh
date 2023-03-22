@@ -34,7 +34,7 @@ file1, file2, file3 = sys.argv[1:]
 with open(file1) as f1:
     expectedClass = [line.rstrip().split()[0] for line in f1]
 with open(file2) as f2:
-    predictedClass = [line.rstrip() for line in f2]
+    predictedClass = [line.rstrip().split()[0] for line in f2]
 with open(file3, "w", encoding="utf-8") as f3:
 	f3.write("Test accuracy: " + str(sum(x == y for x, y in zip(expectedClass, predictedClass))/len(predictedClass)))
 ' $efile $cfile $ofile
