@@ -60,11 +60,12 @@ Example:
 
 `2_FilterSyntacticTrees.sh -i ./data/datasets/amazonreviews_train_alltrees.tsv -f ./data/datasets/validtrees.txt`
 	
-### Step 3 - Spliting data in train/dev/test parts with proportions 80/10/10.
+### Step 3 - Spliting data in train/dev/test parts.
 
 To perform this step run the script *3_SplitTrainTestDev.sh* passing the following parameters:
 
 - -i \<input file\>         TAB separated 3-column filtered file
+- -r         				Parameter for the random stratified splitting. If this parameter is omitted then the splitt method will guarantee that the words in the test/dev sets are also in the train set. 
 
 3 files fill be created containing suffix '_train', '_test' and '_dev' in the name.
 
