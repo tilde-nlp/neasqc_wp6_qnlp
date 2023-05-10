@@ -4,14 +4,17 @@ import json
 import datetime
 import numpy as np
 import tensorflow as tf
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.models import Sequential, Model, load_model
 from tensorflow.keras.layers import (Input, Dense, Activation, Conv1D,
-                          Dropout, MaxPooling1D, Flatten)
+                          Dropout, MaxPooling1D, Flatten, LSTM, Embedding, Bidirectional)
 from tensorflow.keras.optimizers import Adam
 #from tensorflow.keras.optimizers.legacy import Adam
 from tensorflow.keras import regularizers
 from sklearn.preprocessing import LabelEncoder
 import argparse
+import matplotlib.pyplot as plt
 
 def ts():
     return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
@@ -36,12 +39,19 @@ class NNClassifier:
             "amsgrad": False,
             "gpu": -1
         }
-        if "model" in kwargs and kwargs["model"] == "CNN": #defaults for CNN
-            self.params["epochs"] = 30
-            self.params["filterCounts"] = [self.params["vectorSpaceSize"], self.params["vectorSpaceSize"]]
-            self.params["maxSentenceLen"] = 6
-            self.params["dropout"] = 0.5
-
+        if "model" in kwargs:
+            if kwargs["model"] == "CNN": #defaults for CNN
+                self.params["epochs"] = 30
+                self.params["filterCounts"] = [self.params["vectorSpaceSize"], self.params["vectorSpaceSize"]]
+                self.params["maxSentenceLen"] = 6
+                self.params["dropout"] = 0.5
+            elif kwargs["model"] == "LSTM":
+                self.params["epochs"] = 100
+                self.params["vectorSpaceSize"] = 128
+                self.params["vocab_size"] = 5000
+                self.params["maxSentenceLen"] = 6
+                self.params["dropout"] = 0.5
+                
         self.params.update(kwargs)
         gpudevices = tf.config.list_physical_devices('GPU')
         cpudevices = tf.config.list_physical_devices('CPU')
@@ -59,7 +69,15 @@ class NNClassifier:
         model.add(Dense(nClasses, input_dim=vectorSpaceSize, activation='softmax'))
         return model
 
-
+    @staticmethod
+    def createModel1LSTM(vectorSpaceSize, nClasses, vocab_size, dropout, **kwargs):
+        model = Sequential()
+        model.add(Embedding(vocab_size, vectorSpaceSize))
+        model.add(Dropout(dropout))
+        model.add(Bidirectional(LSTM(vectorSpaceSize)))
+        model.add(Dense(nClasses, activation='softmax'))
+        return model
+        
     @staticmethod
     def createModelCNN(vectorSpaceSize, maxSentenceLen, nClasses, filterCounts, dropout, **kwargs):
         inp = Input(shape=(maxSentenceLen, vectorSpaceSize))
@@ -103,6 +121,8 @@ class NNClassifier:
             self.model = NNClassifier.createModelCNN(**self.params)
         elif self.params["model"] == "FFNN":
             self.model = NNClassifier.createModel1(**self.params)
+        elif self.params["model"] == "LSTM":
+            self.model = NNClassifier.createModel1LSTM(**self.params)
         else:
             raise NotImplementedError(f"Unknown model type: {self.params['model']}")
         optimizer = NNClassifier.createAdamOptimizer(**self.params)
@@ -115,7 +135,10 @@ class NNClassifier:
         else:
             print("Training with early stopping.")       
             callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=3)
-            return self.model.fit(trainX, trainY, epochs=self.params["epochs"], validation_data=(devX, devY), verbose=2, callbacks=[callback])
+            history = self.model.fit(trainX, trainY, epochs=self.params["epochs"], validation_data=(devX, devY), verbose=2, callbacks=[callback])
+            plot_graphs(history, "accuracy")
+            plot_graphs(history, "loss")
+            return history
 
     def predict(self, testX):
         res = self.model.predict(testX, verbose=0)
@@ -135,11 +158,31 @@ class NNClassifier:
             print(f"Failed to load model from {folder}")
             return False
         return True
-        
+ 
+def plot_graphs(history, string):
+    plt.plot(history.history[string])
+    plt.plot(history.history['val_'+string])
+    plt.xlabel("Epoch Count")
+    plt.ylabel(string)
+    plt.legend([string, 'val_'+string])
+    plt.show()
+  
 def loadData(file):
-    with open(file, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    return data
+    dataset = []
+    
+    if '.json' in file:
+        with open(file, "r", encoding="utf-8") as f:
+            dataset = json.load(f)
+    elif '.tsv' in file:
+        rowlist = open(file,encoding="utf-8").read().splitlines()
+        for line in rowlist:
+            d = {}
+            linecols = line.split('\t')
+            d["class"]=linecols[0].rstrip()
+            d["sentence"]=linecols[1].rstrip()
+            dataset.append(d)
+            
+    return dataset
 
 def prepareXYSentence(data, classify_by_field="truth_value",idxdict={}):
     '''Prepares the data as numpy arrays suitable for training.
@@ -199,6 +242,14 @@ def prepareClassValueDict(dataset, classify_by_field):
             idxdict[ex[classify_by_field]] = idx
             idx = idx + 1
     return idxdict
+ 
+def prepareTokenDict(dataset):
+    sentences = []
+    for ex in dataset:
+        sentences.append(ex["sentence"])
+    tokenizer = Tokenizer(num_words = 5000, oov_token='<oov>')
+    tokenizer.fit_on_texts(sentences)
+    return tokenizer.word_index
     
 def prepareTrainTestDevXYSentence(data, classify_by_field="truth_value"):
     '''Prepares the data as numpy arrays suitable for training.
@@ -251,6 +302,55 @@ def prepareXYWords(data, maxLen, classify_by_field="truth_value",idxdict={}):
 
     return X, Y
 
+def prepareXYWordsNoEmbedd(data, tokdict, maxLen, classify_by_field="truth_value",idxdict={}):
+    '''Prepares the data as numpy arrays suitable for training.
+    @param data: the data to process
+    @param maxLen: maximum sentence length. Longer sentences are truncated,
+        shorter sentences are padded with zeros
+    @return: 2 numpy arrays corresponding to input data and labels
+    '''
+    if len(idxdict) == 0:
+        idxdict = prepareClassValueDict(data, classify_by_field)
+
+    arrX = []
+    arrY = []
+    for ex in data:
+        arrX.append(ex["sentence"])
+        arrY.append(idxdict[ex[classify_by_field]])
+
+    tokenizer = Tokenizer(num_words = 5000, oov_token='<oov>')
+    tokenizer.word_index = tokdict
+    train_sequences = tokenizer.texts_to_sequences(arrX)
+
+    arrX = pad_sequences(train_sequences, maxlen=maxLen, padding='post', truncating='post')
+
+    X = np.array(arrX)
+    Y = tf.keras.utils.to_categorical(arrY, num_classes=len(idxdict))
+
+    return X, Y
+
+def prepareXWordsNoEmbedd(data, tokdict, maxLen=6):
+    '''Prepares the data as numpy arrays suitable for training.
+    @param data: the data to process
+    @param maxLen: maximum sentence length. Longer sentences are truncated,
+        shorter sentences are padded with zeros
+    @return: numpy array corresponding to input data
+    '''
+    arrX = []
+
+    for ex in data:
+        arrX.append(ex["sentence"])
+
+    tokenizer = Tokenizer(num_words = 5000, oov_token='<oov>')
+    tokenizer.word_index = tokdict
+    train_sequences = tokenizer.texts_to_sequences(arrX)
+
+    arrX = pad_sequences(train_sequences, maxlen=maxLen, padding='post', truncating='post')
+
+    X = np.array(arrX)
+
+    return X
+    
 def prepareXWords(data, maxLen=6):
     '''Prepares the data as numpy array suitable for testing.
     @param data: the data to process

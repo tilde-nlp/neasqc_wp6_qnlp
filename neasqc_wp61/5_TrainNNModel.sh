@@ -27,12 +27,12 @@ __usage="
 Usage: $(basename $0) [OPTIONS]
 
 Options:
-  -t <train data file> Json data file for classifier training (with embeddings)
-  -d <dev data file>   Json data file for classifier validation (with embeddings)
+  -t <train data file> Json data file for classifier training (with embeddings) or tsv file (if not using pre-trained embeddings, acquired using script 3_SplitTrainTestDev.sh)
+  -d <dev data file>   Json data file for classifier validation (with embeddings) or tsv file (if not using pre-trained embeddings, acquired using script 3_SplitTrainTestDev.sh)
   -f <field>           Classify by field
-  -e <embedding type>  Embedding type: 'sentence' or 'word'
+  -e <embedding type>  Embedding type: 'sentence', 'word', or '-' (if not using pre-trained embeddings)
   -m <model directory> Directory where to save trained model
-  -g <use gpu>		   Number of GPU to use (from 0 to available GPUs), -1 if use CPU (dfault is -1)
+  -g <use gpu>		   Number of GPU to use (from 0 to available GPUs), -1 if use CPU (default is -1)
 "
 	echo "$__usage"
 else

@@ -4,7 +4,7 @@ import sys
 import argparse
 import numpy as np
 sys.path.append("./models/classical/")
-from NNClassifier import (loadData, NNClassifier, prepareXWords, prepareXSentence)
+from NNClassifier import (loadData, NNClassifier, prepareXWords, prepareXSentence, prepareXWordsNoEmbedd)
 
  
 def main():
@@ -12,7 +12,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--infile", help = "Json data file for classifier testing (with embeddings)")
     parser.add_argument("-m", "--modeldir", help = "Directory of pre-tained classifier model")
-    parser.add_argument("-e", "--etype", help = "Embedding type: sentence or word")
+    parser.add_argument("-e", "--etype", help = "Embedding type: 'sentence', 'word' or '-'")
     parser.add_argument("-g", "--gpu", help = "Number of GPU to use (from '0' to available GPUs), '-1' if use CPU (default is '-1')")
     args = parser.parse_args()
 
@@ -27,6 +27,11 @@ def main():
             classifier = NNClassifier(gpu=int(args.gpu))
             classifier.load(args.modeldir)
             X=prepareXSentence(testdata)
+        elif args.etype == "-":
+            classifier = NNClassifier(model='LSTM',gpu=int(args.gpu))
+            classifier.load(args.modeldir)
+            tokdict = loadData(args.modeldir+'/tokdict.json')
+            X=prepareXWordsNoEmbedd(testdata,tokdict)
         else:
             print("Invalid embedding type. it must be 'word' or 'sentence'.")
             sys.exit(0)

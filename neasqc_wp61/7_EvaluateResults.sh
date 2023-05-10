@@ -28,7 +28,7 @@ Options:
 	echo "$__usage"
 elif [ "$(wc -l < $efile)" -eq "$(wc -l < $cfile)" ]
 then
-python -c '
+python3 -c '
 import sys, csv, numpy
 file1, file2, file3 = sys.argv[1:]
 with open(file1) as f1:

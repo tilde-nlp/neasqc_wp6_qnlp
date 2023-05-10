@@ -65,7 +65,7 @@ Example:
 To perform this step run the script *3_SplitTrainTestDev.sh* passing the following parameters:
 
 - -i \<input file\>         TAB separated 3-column filtered file
-- -r         				Parameter for the random stratified splitting. If this parameter is omitted then the splitt method will guarantee that the words in the test/dev sets are also in the train set. 
+- -r         				Parameter for the random stratified splitting. If this parameter is omitted then the split method will guarantee that the words in the test/dev sets are also in the train set. 
 
 3 files fill be created containing suffix '_train', '_test' and '_dev' in the name.
 
@@ -127,14 +127,14 @@ Example:
 
 #### Classical NLP
 
-The folder *./models/classical* contains the source code of a class implementing neural network classifiers. Currently, a shallow feedforward neural network and a convolutional network are implemented.
+The folder *./models/classical* contains the source code of a class implementing neural network classifiers. Currently, a shallow feedforward neural network, a convolutional network and Bidirectional LSTM neural network are implemented.
 
 To perform this step run the script *5_TrainNNModel.sh* passing the following parameters:
 
-- -t \<train data file\> Json data file for classifier training (with embeddings)
-- -d \<dev data file\>   Json data file for classifier validation (with embeddings)
+- -t \<train data file\> Json data file for classifier training (with embeddings) or tsv file (if not using pre-trained embeddings, acquired using script 3_SplitTrainTestDev.sh)
+- -d \<dev data file\>   Json data file for classifier validation (with embeddings) or tsv file (if not using pre-trained embeddings, acquired using script 3_SplitTrainTestDev.sh)
 - -f \<field\>           Classify by field
-- -e \<embedding unit\>  Embedding unit: 'sentence' or 'word'
+- -e \<embedding unit\>  Embedding unit: 'sentence', 'word', or '-' (if not using pre-trained embeddings)
 - -m \<model directory\> Directory where to save trained model
 - -g \<gpu use\>         Number of GPU to use (from 0 to available GPUs), -1 if use CPU (default is -1)
 	
@@ -146,6 +146,8 @@ Examples:
 
 `5_TrainNNModel.sh -t ./data/datasets/amazonreview_train_filtered_train_fasttext.json -d ./data/datasets/amazonreview_train_filtered_dev_fasttext.json -f 'class' -e 'word' -m ./models/classical/amazonreview_train_fasttext -g '0'`
 
+`5_TrainNNModel.sh -t ./data/datasets/amazonreview_train_filtered_train.tsv -d ./data/datasets/amazonreview_train_filtered_dev.tsv -f 'class' -e '-' -m ./models/classical/amazonreview_train -g '0'`
+
 #### Quantum NLP
 
 ????
@@ -156,9 +158,9 @@ Examples:
 
 To perform this step run the script *6_ClassifyWithNNModel.sh* passing the following parameters:
 
-- -i \<input file\> 	   Json data file for classifier testing (with embeddings acquired using script 4_GetEmbeddings.sh)
+- -i \<input file\> 	   Json data file for classifier testing (with embeddings acquired using script 4_GetEmbeddings.sh) or tsv file (if not using pre-trained embeddings, acquired using script 3_SplitTrainTestDev.sh)
 - -o \<output file\>     Result file with predicted classes
-- -e \<embedding unit\>  Embedding unit: 'sentence' or 'word'
+- -e \<embedding unit\>  Embedding unit: 'sentence', 'word', or '-' (if not using pre-trained embeddings)
 - -m \<model directory\> Directory of pre-tained classifier model
 - -g \<gpu use\>         Number of GPU to use (from 0 to available GPUs), -1 if use CPU (default is -1)
 
@@ -169,6 +171,8 @@ Examples:
 `6_ClassifyWithNNModel.sh -i ./data/datasets/amazonreview_train_filtered_test_all-distilroberta-v1.json -o ./benchmarking/results/raw/amazonreview_train_distilroberta.txt -e 'sentence' -m ./models/classical/amazonreview_train_distilroberta -g '0'`
 
 `6_ClassifyWithNNModel.sh -i ./data/datasets/amazonreview_train_filtered_test_fasttext.json -o ./benchmarking/results/raw/amazonreview_train_fasttext.txt -e 'word' -m ./models/classical/amazonreview_train_fasttext -g '0'`
+
+`6_ClassifyWithNNModel.sh -i ./data/datasets/amazonreview_train_filtered_test.tsv -o ./benchmarking/results/raw/amazonreview_train.txt -e '-' -m ./models/classical/amazonreview_train -g '0'`
 
 
 #### Quantum NLP
@@ -226,6 +230,7 @@ Test examples has the following syntactical structure:
 `s[n   (s\\n)[((s\\n)/n)   n[(n/n)   n[(n/n)   n]]]]`
 
 Dataset *labelled_newscatcher_dataset* has only 12 examples and *RAW_interactions* has only 77 examples after filtering. As the number of examples is too small models are not trained for these datasets.
+The train/test/dev sets are split using the random stratified method.
 
 |                                                                                                                    | reviews.tsv<br>(train: 1596, dev: 199, test: 199)<br>5 classes | amazonreview_train.tsv<br>(train: 16853, dev: 2107, test: 2107)<br>2 classes |
 |--------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------|------------------------------------------------------------------------------|
@@ -236,5 +241,16 @@ Dataset *labelled_newscatcher_dataset* has only 12 examples and *RAW_interaction
 | BERT sentence emb.: *bert-base-cased*<br>NN model type: Shallow feedforward neural network                         | Train accuracy: 0.8020<br>Test accuracy: 0.6533                | Train accuracy: 0.8044<br>Test accuracy: 0.7902                              |
 | BERT word emb.: *bert-base-uncased*<br>NN model type: Convolutional network (max sentence length 6)                | Train accuracy: 0.8791<br>Test accuracy: 0.6683                | Train accuracy: 0.8838<br>Test accuracy: 0.8396                              |
 | BERT word emb.: *bert-base-cased*<br>NN model type: Convolutional network (max sentence length 6)                  | Train accuracy: 0.8847<br>Test accuracy: 0.5678                | Train accuracy: 0.8740<br>Test accuracy: 0.8187                              |
+
+
+Different split method. The words in the test/dev sets are also in the train set.
+
+|                                                                                                                    | reviews.tsv<br>(train: 1864, dev: 66, test: 65)<br>5 classes   | amazonreview_train.tsv<br>(train: 18961, dev: 1053, test: 1053)<br>2 classes |
+|--------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------|------------------------------------------------------------------------------|
+| fastText word emb.: *cc.en.300.bin*<br>NN model type: Convolutional network (max sentence length 6)                | Train accuracy: 0.9759<br>Test accuracy: 0.7538                | Train accuracy: 0.9647<br>Test accuracy: 0.8794                              |
+| Transformer sentence emb.: *all-distilroberta-v1*<br>NN model type: Shallow feedforward neural network             | Train accuracy: 0.7715<br>Test accuracy: 0.7846                | Train accuracy: 0.8539<br>Test accuracy: 0.8955                              |
+| BERT sentence emb.: *bert-base-uncased*<br>NN model type: Shallow feedforward neural network                       | Train accuracy: 0.8106<br>Test accuracy: 0.7846                | Train accuracy: 0.8331<br>Test accuracy: 0.8708                              |
+| BERT word emb.: *bert-base-uncased*<br>NN model type: Convolutional network (max sentence length 6)                | Train accuracy: 0.8471<br>Test accuracy: 0.8000                | Train accuracy: 0.8817<br>Test accuracy: 0.9002                              |
+| No pre-trained embeddings<br>NN model type: Bidirectional LSTM NN (max sentence length 6)                          | Train accuracy: 0.8026<br>Test accuracy: 0.7538                | Train accuracy: 0.8944<br>Test accuracy: 0.8984                              |
 
 

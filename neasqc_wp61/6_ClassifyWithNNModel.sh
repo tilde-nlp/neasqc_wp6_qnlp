@@ -19,17 +19,17 @@ do
     esac
 done
 
-if [[ "$infile" == "-" ]] || [[ "$outfile" == "-" ]] || [[ "$etype" == "-" ]] || [[ "$modeldir" == "-" ]]
+if [[ "$infile" == "-" ]] || [[ "$outfile" == "-" ]] || [[ "$modeldir" == "-" ]]
 then
 __usage="
 Usage: $(basename $0) [OPTIONS]
 
 Options:
-  -i <input file> 	   Json data file for classifier testing (with embeddings acquired using script 4_GetEmbeddings.sh)
+  -i <input file> 	   Json data file for classifier testing (with embeddings acquired using script 4_GetEmbeddings.sh) or tsv file (if not using pre-trained embeddings, acquired using script 3_SplitTrainTestDev.sh)
   -o <output file>     Result file with predicted classes
-  -e <embedding type>  Embedding type: 'sentence' or 'word'
+  -e <embedding type>  Embedding type: 'sentence', 'word', or '-'
   -m <model directory> Directory of pre-tained classifier model
-  -g <use gpu>		   Number of GPU to use (from 0 to available GPUs), -1 if use CPU (dfault is -1)
+  -g <use gpu>		   Number of GPU to use (from 0 to available GPUs), -1 if use CPU (default is -1)
 "
 	echo "$__usage"
 else
