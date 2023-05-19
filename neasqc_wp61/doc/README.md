@@ -184,7 +184,7 @@ Examples:
 To perform this step run the script *7_EvaluateResults.sh* passing the following parameters:
 
 - -e \<expected results file\> Expected results file containing class in the first column and optionaly other columns
-- -c \<expected results file\> Results acquired using classifier.
+- -c \<classifier results file\> Results acquired using classifier.
 - -o \<accuracy file\>         File for calculated test accuracy
 
 Example:
