@@ -21,7 +21,7 @@ do
     esac
 done
 
-if [[ "$tfile" == "-" ]] || [[ "$dfile" == "-" ]] || [[ "$etype" == "-" ]] || [[ "$modeldir" == "-" ]]
+if [[ "$tfile" == "-" ]] || [[ "$dfile" == "-" ]] || [[ "$modeldir" == "-" ]]
 then
 __usage="
 Usage: $(basename $0) [OPTIONS]

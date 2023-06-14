@@ -28,6 +28,7 @@ def main():
         txtfield = 'f2'
  
     bobcat_parser = BobcatParser(device=int(args.gpu))
+    print(args)
     print(classfield+' and '+txtfield)
     with open(args.infile, encoding="utf8", newline='') as csvfile, open(args.outfile, "w", encoding="utf8") as tsvfile:
         if args.classfield != None: 
@@ -41,6 +42,8 @@ def main():
         for row in news_reader:
             score = row[classfield]
             if score == '0':
+                continue
+            if row[txtfield] == None:
                 continue
             summary = row[txtfield].replace("\n"," ").replace("\t"," ").replace("\r"," ")
             summary = re.sub('@[^\s]+ ','',summary)

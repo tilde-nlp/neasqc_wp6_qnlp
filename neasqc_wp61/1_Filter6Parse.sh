@@ -21,6 +21,7 @@ done
 
 replace="_alltrees.tsv"
 outfile=${infile//.csv/$replace}
+outfile=${infile//.txt/$replace}
 	
 if [[ "$infile" == "-" ]]
 then
@@ -38,7 +39,7 @@ Options:
 else
 	if [[ "$classfield" == "-" ]]
 	then
-		python ./data/data_processing/filter-with-spacy-preprocessing.py -i "${infile}" -o "${outfile}" -g "${gpu}"
+		python ./data/data_processing/filter-with-spacy-preprocessing.py -i "${infile}" -o "${outfile}" -d "${delimiter}" -g "${gpu}"
 	else
 		python ./data/data_processing/filter-with-spacy-preprocessing.py -i "${infile}" -o "${outfile}" -d "${delimiter}" -c "${classfield}" -t "${txtfield}" -g "${gpu}"
 	fi

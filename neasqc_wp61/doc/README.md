@@ -26,6 +26,15 @@ See instructions in <https://www.endtoend.ai/tutorial/how-to-download-kaggle-dat
 
 After run the script `0_FetchDatasets.sh` to download the datasets.
 
+The following datasets are used for the sentence similarity detection task.
+
+- *chatgpt-paraphrases.csv* from the <https://www.kaggle.com/datasets/vladimirvorobevv/chatgpt-paraphrases>
+- *Europarl.en-fr.en*, *Europarl.en-fr.fr* from the <https://opus.nlpl.eu/download.php?f=Europarl/v8/moses/en-fr.txt.zip>
+- *Tatoeba.en-it.en*, *Tatoeba.en-it.it* from the <https://opus.nlpl.eu/download.php?f=Tatoeba/v2023-04-12/moses/en-it.txt.zip>
+
+### Step 0_1 - Only for the datasets used in the sentence similarity detection task. Text examples are converted to the two-column format - the label (the same label for the similar sentences) and the sentence.
+
+To perform this step run the script *0_1_Preprocess_similar_sentences.sh*
 
 ### Step 1 - Tokenizing and parsing datasets using Bobcat parser. Text examples containing more that 6 tokens are skipped.
 
@@ -49,6 +58,14 @@ Files with syntactic tags `Reviews_alltrees.tsv`, `labelled_newscatcher_dataset_
 
 The name of the dataset *train* in further steps is changed to *amazonreviews_train* for clarity.
 
+Examples with the sentence similarity datasets:
+
+`1_Filter6Parse.sh -i ./data/datasets/sorted_tatoeba_it.txt -d "   " -g '-1'`
+
+`1_Filter6Parse.sh -i ./data/datasets/sorted_Europarl_fr.txt -d "   " -g '-1'`
+
+`1_Filter6Parse.sh -i ./data/datasets/chatgpt_paraphrases.txt -d "   " -g '-1'`
+
 ### Step 2 - Selecting data with a certain syntactical structure.
 
 To perform this step run the script *2_FilterSyntacticTrees.sh* passing the following parameters:
@@ -59,6 +76,14 @@ To perform this step run the script *2_FilterSyntacticTrees.sh* passing the foll
 Example:
 
 `2_FilterSyntacticTrees.sh -i ./data/datasets/amazonreviews_train_alltrees.tsv -f ./data/datasets/validtrees.txt`
+
+Example with the sentence similarity dataset:
+
+`2_FilterSyntacticTrees.sh -i ./data/datasets/chatgpt_paraphrases_alltrees.tsv -f ./data/datasets/similarity_validtrees.txt`
+
+### Step 2_3 - Only for the datasets used in the sentence similarity detection task. Similar sentences are paired. Unsimilar sentence pairs are created from the random sentences. All 3 datasets are merged.
+
+To perform this step run the script *2_3_Sentence_pairing.sh*
 	
 ### Step 3 - Spliting data in train/dev/test parts.
 
@@ -152,11 +177,11 @@ Examples:
 
 ????
 
-### Step 6 - Using classifier.
+### Step 6 - Using classifier or predicting sentence similarity.
 
 #### Classical NLP
 
-To perform this step run the script *6_ClassifyWithNNModel.sh* passing the following parameters:
+For classification run the script *6_ClassifyWithNNModel.sh* passing the following parameters:
 
 - -i \<input file\> 	   Json data file for classifier testing (with embeddings acquired using script 4_GetEmbeddings.sh) or tsv file (if not using pre-trained embeddings, acquired using script 3_SplitTrainTestDev.sh)
 - -o \<output file\>     Result file with predicted classes
@@ -164,7 +189,7 @@ To perform this step run the script *6_ClassifyWithNNModel.sh* passing the follo
 - -m \<model directory\> Directory of pre-tained classifier model
 - -g \<gpu use\>         Number of GPU to use (from 0 to available GPUs), -1 if use CPU (default is -1)
 
-Examples:
+Examples for the classification task:
 
 `6_ClassifyWithNNModel.sh -i ./data/datasets/amazonreview_train_filtered_test_bert-base-uncased.json -o ./benchmarking/results/raw/amazonreview_train_bert-base-uncased.txt -e 'sentence' -m ./models/classical/amazonreview_train_bert-uncased -g '0'`
 
@@ -174,6 +199,18 @@ Examples:
 
 `6_ClassifyWithNNModel.sh -i ./data/datasets/amazonreview_train_filtered_test.tsv -o ./benchmarking/results/raw/amazonreview_train.txt -e '-' -m ./models/classical/amazonreview_train -g '0'`
 
+For similarity detection run the script *6_DetectSimilarity.sh* passing the following parameters:
+
+- -i \<input file\> 	 tsv file (acquired using script 3_SplitTrainTestDev.sh)
+- -o \<output file\>     Result file with predicted classes
+
+Examples for the sentence similarity task:
+
+If model directory not specified we use pre-trained LaBSE embeddings from <https://huggingface.co/sentence-transformers/LaBSE>
+
+`6_DetectSimilarity.sh -i ./data/datasets/paired_similarity_filtered_test.tsv -o ./benchmarking/results/raw/paired_similarity_labse.txt`
+
+`6_DetectSimilarity.sh -i ./data/datasets/paired_similarity_filtered_test.tsv -o ./benchmarking/results/raw/paired_similarity_fasttext.txt -m ./models/classical/fasttext`
 
 #### Quantum NLP
 
@@ -190,6 +227,10 @@ To perform this step run the script *7_EvaluateResults.sh* passing the following
 Example:
 
 `7_EvaluateResults.sh -e ./data/datasets/amazonreview_train_filtered_test.tsv -c ./benchmarking/results/raw/amazonreview_train_distilroberta.txt -o ./benchmarking/results/amazonreview_train_distilroberta_acc.txt`
+
+`7_EvaluateResults.sh -e ./data/datasets/paired_similarity_filtered_test.tsv -c ./benchmarking/results/raw/paired_similarity_labse.txt -o ./benchmarking/results/paired_similarity_labse_acc.txt`
+
+`7_EvaluateResults.sh -e ./data/datasets/paired_similarity_filtered_test.tsv -c ./benchmarking/results/raw/paired_similarity_fasttext.txt -o ./benchmarking/results/paired_similarity_fasttext_acc.txt`
 
 ## Results
 
