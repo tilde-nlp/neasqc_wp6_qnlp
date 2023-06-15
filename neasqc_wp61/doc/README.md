@@ -60,11 +60,11 @@ The name of the dataset *train* in further steps is changed to *amazonreviews_tr
 
 Examples with the sentence similarity datasets:
 
-`1_Filter6Parse.sh -i ./data/datasets/sorted_tatoeba_it.txt -d "   " -g '-1'`
+`1_Filter6Parse.sh -i ./data/datasets/sorted_tatoeba_it.txt -d $'\t' -g '-1'`
 
-`1_Filter6Parse.sh -i ./data/datasets/sorted_Europarl_fr.txt -d "   " -g '-1'`
+`1_Filter6Parse.sh -i ./data/datasets/sorted_Europarl_fr.txt -d $'\t' -g '-1'`
 
-`1_Filter6Parse.sh -i ./data/datasets/chatgpt_paraphrases.txt -d "   " -g '-1'`
+`1_Filter6Parse.sh -i ./data/datasets/chatgpt_paraphrases.txt -d $'\t' -g '-1'`
 
 ### Step 2 - Selecting data with a certain syntactical structure.
 
@@ -97,6 +97,8 @@ To perform this step run the script *3_SplitTrainTestDev.sh* passing the followi
 Example:
 
 `3_SplitTrainTestDev.sh -i ./data/datasets/amazonreviews_train_filtered.tsv`
+
+`3_SplitTrainTestDev.sh -i ./data/datasets/paired_similarity_filtered.tsv`
 
 ### Step 4 - Acquiring embedding vectors using chosen pre-trained embedding model.
 
@@ -154,7 +156,7 @@ Example:
 
 The folder *./models/classical* contains the source code of a class implementing neural network classifiers. Currently, a shallow feedforward neural network, a convolutional network and Bidirectional LSTM neural network are implemented.
 
-To perform this step run the script *5_TrainNNModel.sh* passing the following parameters:
+To perform this step for the classification task run the script *5_TrainNNModel.sh* passing the following parameters:
 
 - -t \<train data file\> Json data file for classifier training (with embeddings) or tsv file (if not using pre-trained embeddings, acquired using script 3_SplitTrainTestDev.sh)
 - -d \<dev data file\>   Json data file for classifier validation (with embeddings) or tsv file (if not using pre-trained embeddings, acquired using script 3_SplitTrainTestDev.sh)
@@ -172,6 +174,17 @@ Examples:
 `5_TrainNNModel.sh -t ./data/datasets/amazonreview_train_filtered_train_fasttext.json -d ./data/datasets/amazonreview_train_filtered_dev_fasttext.json -f 'class' -e 'word' -m ./models/classical/amazonreview_train_fasttext -g '0'`
 
 `5_TrainNNModel.sh -t ./data/datasets/amazonreview_train_filtered_train.tsv -d ./data/datasets/amazonreview_train_filtered_dev.tsv -f 'class' -e '-' -m ./models/classical/amazonreview_train -g '0'`
+
+To perform this step for the sentence similarity task run the script *5_TrainEmbeddings.sh* passing the following parameters:
+
+- -t \<train data file\> tsv file acquired using script 3_SplitTrainTestDev.sh
+- -m \<model directory\> Directory where to save trained embedding model
+
+Embeddings are trained only on the texts found in the training data.
+	
+Examples:
+
+`5_TrainEmbeddings.sh -t ./data/datasets/paired_similarity_filtered_train.tsv -m ./models/classical/fasttext`
 
 #### Quantum NLP
 
@@ -203,6 +216,7 @@ For similarity detection run the script *6_DetectSimilarity.sh* passing the foll
 
 - -i \<input file\> 	 tsv file (acquired using script 3_SplitTrainTestDev.sh)
 - -o \<output file\>     Result file with predicted classes
+- -m \<model directory\> Directory of the vectorization model trained in Step 5
 
 Examples for the sentence similarity task:
 
@@ -234,9 +248,9 @@ Example:
 
 ## Results
 
-### Results for data with noun phrases
+### Results for classification task (data with noun phrases)
 
-Test examples has the following syntactical structure:
+Test examples have the following syntactical structure:
 
 `n[(n/n)   n[(n/n)   n]]`
 
@@ -256,9 +270,9 @@ Test examples has the following syntactical structure:
 | BERT sentence emb.: *bert-base-uncased*<br>NN model type: Shallow feedforward neural network                       | Train accuracy: 0.7385<br>Test accuracy: 0.7256       | Train accuracy: 0.9929<br>Test accuracy: 0.7777                         | Train accuracy: 0.8115<br>Test accuracy: 0.8073                     |
 | BERT sentence emb.: *bert-base-cased*<br>NN model type: Shallow feedforward neural network                         | Train accuracy: 0.7324<br>Test accuracy: 0.7163       | Train accuracy: 1.0000<br>Test accuracy: 0.7222                         | Train accuracy: 0.7810<br>Test accuracy: 0.7788                     |
 
-### Results for data with sentences
+### Results for classification task (data with sentences)
 
-Test examples has the following syntactical structure:
+Test examples have the following syntactical structure:
 
 `s[n[n] (s\\n)[((s\\n)/(s\\n))   (s\\n)]]`
 
@@ -295,3 +309,61 @@ Different split method. The words in the test/dev sets are also in the train set
 | No pre-trained embeddings<br>NN model type: Bidirectional LSTM NN (max sentence length 6)                          | Train accuracy: 0.8026<br>Test accuracy: 0.7538                | Train accuracy: 0.8944<br>Test accuracy: 0.8984                              |
 
 
+### Results for sentence similarity task
+
+Test examples have the following syntactical structure:
+
+`s[s[n   (s\\n)[((s\\n)/(s\\n))   (s\\n)]] punc]`
+
+`s[s[n[n] (s\\n)[((s\\n)/(s\\n))   (s\\n)]] punc]`
+
+`s[s[n   (s\\n)[((s\\n)/n)   n[(n/n)   n]]] punc]`
+
+`s[s[n   (s\\n)[((s\\n)/n)   n]] punc]`
+
+`s[s[n   (s\\n)[((s\\n)/(s\\n))   (s\\n)[((s\\n)/(s\\n))   (s\\n)]]] punc]`
+
+`s[s[n   (s\\n)[((s\\n)/(s\\n))[((s\\n)/(s\\n))   ((s\\n)\\(s\\n))] (s\\n)]] punc]`
+
+`s[s[n   (s\\n)[((s\\n)/n)   n[n]]] punc]`
+
+`s[s[n   (s\\n)[((s\\n)/n)   n[(n/n)   n[(n/n)   n]]]] punc]`
+
+`s[s[n   (s\\n)[((s\\n)/(s\\n))   (s\\n)[((s\\n)/n)   n]]] punc]`
+
+`s[s[n   (s\\n)[((s\\n)/(s\\n))[((s\\n)/(s\\n))   ((s\\n)\\(s\\n))] (s\\n)[((s\\n)/n)   n]]] punc]`
+
+`s[s[n[n] (s\\n)[((s\\n)/(s\\n))   (s\\n)[((s\\n)/(s\\n))   (s\\n)]]] punc]`
+
+`s[s[n[(n/n)   n] (s\\n)[((s\\n)/(s\\n))   (s\\n)]] punc]`
+
+`s[s[n   (s\\n)[((s\\n)/(s\\n))   (s\\n)[((s\\n)/n)   n[(n/n)   n]]]] punc]`
+
+`s[s[n[n] (s\\n)[((s\\n)/n)   n[(n/n)   n]]] punc]`
+
+`s[s[n   (s\\n)[((s\\n)/(s\\n))   (s\\n)[((s\\n)/p)   p[(p/n)   n]]]] punc]`
+
+`s[s[n   (s\\n)[((s\\n)/(s\\n))   (s\\n)[((s\\n)/n)   n[n]]]] punc]`
+
+`s[s[n[n] (s\\n)[((s\\n)/(s\\n))[((s\\n)/(s\\n))   ((s\\n)\\(s\\n))] (s\\n)]] punc]`
+
+`s[s[n   (s\\n)[((s\\n)/n)   n[n[(n/n)   n]]]] punc]`
+
+`s[s[n   (s\\n)[((s\\n)/(s\\n))   (s\\n)[((s\\n)/(s\\n))   (s\\n)[((s\\n)/n)   n]]]] punc]`
+
+`s[s[(s/(s\\n))[((s/(s\\n))/n)   n] (s\\n)[((s\\n)/n)   n]] punc]`
+
+`s[s[n   (s\\n)[((s\\n)/n)[((s\\n)/n)   ((s\\n)\\(s\\n))] n[(n/n)   n]]] punc]`
+
+`s[s[n[n] (s\\n)[((s\\n)/n)   n[(n/n)   n[(n/n)   n]]]] punc]`
+
+`s[s[(s/(s\\n))[((s/(s\\n))/n)   n] (s\\n)[((s\\n)/n)   n[(n/n)   n]]] punc]`
+
+`s[s[n   (s\\n)] punc]`
+
+`s[s[n   (s\\n)[((s\\n)/p)   p[(p/n)   n[(n/n)   n]]]] punc]`
+
+|                                                                                                                                                                                                                 | paired_similarity_filtered.tsv<br>(train: 26218, dev: 1456, test: 1456) |
+|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------|
+| pre-trained LaBSE embeddings from <https://huggingface.co/sentence-transformers/LaBSE><br>using Euclidean distance between sentence embedding vectors<br>Sentence pair assumed similar if Euclidean score < 0.8 | Test accuracy: 0.9588                                                   |
+| fastText embeddings trained on train set sentences<br>using Euclidean distance between sentence embedding vectors<br>Sentence pair assumed similar if Euclidean score < 0.5                                     | Test accuracy: 0.8915                                                   |

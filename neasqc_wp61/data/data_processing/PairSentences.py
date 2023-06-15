@@ -26,7 +26,7 @@ def main():
             items = x.strip().split('\t')
             if len(items) == 3:
                 items[1] = re.sub(r"[\(\)]","",items[1])
-                if len(items[1])>5:
+                if len(items[1])>5 and items[1].isascii():
                     stripped=StripSentence(items[1])
                     trees[items[1]]=items[2]
                     if items[0] ==id:
@@ -41,7 +41,9 @@ def main():
                             print(f"True\t{s1} | {s2}\t{trees[s1]} | {trees[s2]}")
                             numTrue = numTrue + 1
                             notprinted.update(similarsent)
-                        
+                        elif len(similarsent)==1:
+                            notprinted.update(similarsent)
+                            
                         similarsent.clear()
                         comparesent.clear()
                         similarsent.add(items[1])

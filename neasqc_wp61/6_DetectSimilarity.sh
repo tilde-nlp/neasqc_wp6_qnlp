@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo 'This script that detects if two sentences are similar.'
+echo 'This script detects if two sentences are similar.'
 
 infile='-'
 outfile='-'
