@@ -32,7 +32,7 @@ The following datasets are used for the sentence similarity detection task.
 - *Europarl.en-fr.en*, *Europarl.en-fr.fr* from the <https://opus.nlpl.eu/download.php?f=Europarl/v8/moses/en-fr.txt.zip>
 - *Tatoeba.en-it.en*, *Tatoeba.en-it.it* from the <https://opus.nlpl.eu/download.php?f=Tatoeba/v2023-04-12/moses/en-it.txt.zip>
 
-### Step 0_1 - Only for the datasets used in the sentence similarity detection task. Text examples are converted to the two-column format - the label (the same label for the similar sentences) and the sentence.
+### Step 0_1 - Only for the datasets used in the sentence similarity detection task. Text examples are converted to the two-column format - the similar sentence ID (the same ID for the similar sentences) and the sentence.
 
 To perform this step run the script *0_1_Preprocess_similar_sentences.sh*
 
