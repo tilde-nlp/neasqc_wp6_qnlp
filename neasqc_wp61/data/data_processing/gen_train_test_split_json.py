@@ -63,15 +63,5 @@ def main():
 
     test_data = unpack_data(test_data)
 
-    ds = {
-        "train_data": train_data,
-        "test_data": test_data,
-    }
-
-    with open(filename, "w", encoding="utf-8") as f:
-        json.dump(ds, f, ensure_ascii=False, indent=2)
-
-
-
 if __name__ == "__main__":
     sys.exit(int(main() or 0))
