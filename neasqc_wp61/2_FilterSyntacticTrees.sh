@@ -16,7 +16,7 @@ done
 replace="_filtered.tsv"
 outfile=${infile//_alltrees.tsv/$replace}
 	
-if [[ "$infile" == "-" ]] || [[ "$filterfile" == "-" ]]
+if [[ "$infile" == "-" ]]
 then
 __usage="
 Usage: $(basename $0) [OPTIONS]
@@ -26,6 +26,9 @@ Options:
   -f <syntactical trees file>  File containing syntactical trees for filtering
 "
 	echo "$__usage"
+elif [[ "$filterfile" == "-" ]]
+then
+	python ./data/data_processing/filter-by_syntax_sentences.py -i "${infile}" -o "${outfile}"
 else
 	python ./data/data_processing/filter-by_syntax.py -i "${infile}" -o "${outfile}" -f "${filterfile}"
 	wc -l $outfile | awk '{ print $1, " lines added to the filtered file."}'

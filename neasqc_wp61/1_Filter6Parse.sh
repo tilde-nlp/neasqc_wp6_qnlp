@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo 'This script tokenizes and parses dataset using Bobcat parser. Text examples containing more that 6 tokens are skipped.'
+echo 'This script tokenizes and parses dataset using Bobcat parser. Text examples containing more that 20 tokens are skipped.'
 
 infile='-'
 delimiter=','
@@ -20,8 +20,8 @@ do
 done
 
 replace="_alltrees.tsv"
-outfile=${infile//.csv/$replace}
-outfile=${infile//.txt/$replace}
+outfile=${infile/.csv/$replace}
+outfile=${infile/.txt/$replace}
 	
 if [[ "$infile" == "-" ]]
 then

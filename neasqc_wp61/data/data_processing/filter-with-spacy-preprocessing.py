@@ -16,7 +16,7 @@ def main():
     parser.add_argument("-d", "--delimiter", default=',', help = "Field delimiter symbol")
     parser.add_argument("-c", "--classfield", required=False, help = "Name of class field")
     parser.add_argument("-t", "--txtfield", required=False, help = "Name of text field")
-    parser.add_argument("-f", "--firstsentence", action='store_true', required=False, help = "Take the first sentence if the text is longer that 6 tokens")   
+    parser.add_argument("-f", "--firstsentence", action='store_true', required=False, help = "Take the first sentence if the text is longer that 20 tokens")   
     parser.add_argument("-g", "--gpu", help = "Number of GPU to use (from '0' to available GPUs), '-1' if use CPU (default is '-1')")
     args = parser.parse_args()
     
@@ -53,10 +53,10 @@ def main():
             norm_summary = norm_process.stdout.readline().decode("utf-8").rstrip()
             tok_summary = " ".join(tokeniser.tokenise_sentences([norm_summary])[0])
 
-            if len(tok_summary.split())>6:
+            if len(tok_summary.split())>20:
                 if args.firstsentence==True:
                     tok_summary = re.sub('^([^\.!?]+).+','\\1',tok_summary)
-                    if len(tok_summary.split())>6:
+                    if len(tok_summary.split())>20:
                         continue
                 else:
                     continue

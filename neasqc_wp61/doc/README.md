@@ -71,7 +71,7 @@ Examples with the sentence similarity datasets:
 To perform this step run the script *2_FilterSyntacticTrees.sh* passing the following parameters:
 
 - -i \<input file\>               TAB separated 3-column file to filter
-- -f \<syntactical trees file\>   File containing list of preferable syntactical tags
+- -f \<syntactical trees file\>   File containing list of preferable syntactical tags. If this parameter is missing all tags with the structure  *s[...]* are selected.
 
 Example:
 
