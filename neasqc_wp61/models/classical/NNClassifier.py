@@ -10,13 +10,14 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.models import Sequential, Model, load_model
 from tensorflow.keras.layers import (Input, Dense, Activation, Conv1D,
-                          Dropout, MaxPooling1D, Flatten, LSTM, Embedding, Bidirectional)
+                          Dropout, MaxPooling1D, Flatten, LSTM, Embedding, Bidirectional,GlobalAveragePooling1D)
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import LearningRateScheduler
 #from tensorflow.keras.optimizers.legacy import Adam
 from tensorflow.keras import regularizers
 from sklearn.preprocessing import LabelEncoder
 import argparse
+import matplotlib.pyplot as plt
 
 def ts():
     return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
@@ -36,7 +37,7 @@ class StepDecay():
 		alpha = self.initAlpha * (self.factor ** exp)
 		# return the learning rate
 		return float(alpha)
-        
+           
 class NNClassifier:
     """
     A class implementing neural network classifiers.
@@ -53,7 +54,7 @@ class NNClassifier:
             "beta_1": 0.9,
             "beta_2": 0.999,
             "epochs": 100,
-            "epsilon": None,
+            "epsilon": 1e-07,
             "amsgrad": False,
             "gpu": -1,
             "batch_size": 32
@@ -76,16 +77,19 @@ class NNClassifier:
         cpudevices = tf.config.list_physical_devices('CPU')
 
         if (self.params["gpu"] == -1 and len(cpudevices) > 0): # want CPU, has CPU
-            print("Training/running model on CPU.")
+            print("Training/running model on CPU.",file=sys.stderr)
             tf.config.set_visible_devices([], 'GPU')
         elif (self.params["gpu"] > -1 and len(gpudevices) > self.params["gpu"]): # want GPU, has GPU with that number
             tf.config.set_visible_devices(gpudevices[self.params["gpu"]], 'GPU')
-            print("Training/running model on GPU: ", gpudevices[self.params["gpu"]])
+            print("Training/running model on GPU: ", gpudevices[self.params["gpu"]],file=sys.stderr)
 
     @staticmethod
     def createModel1(vectorSpaceSize, nClasses, **kwargs):
         model = Sequential()
         model.add(Dense(nClasses, input_dim=vectorSpaceSize, activation='softmax'))
+        #model.add(Dense(vectorSpaceSize, input_dim=vectorSpaceSize, activation="relu"))
+        #model.add(Dropout(0.1))
+        #model.add(Dense(nClasses, activation='softmax'))    
         return model
 
     @staticmethod
@@ -123,7 +127,7 @@ class NNClassifier:
 
     @staticmethod
     def createAdamOptimizer(learning_rate=0.001, beta_1=0.9, beta_2=0.999,
-                            epsilon=None, amsgrad=False, **kwargs):
+                            epsilon=1e-07, amsgrad=False, **kwargs):
                             
         #lr_schedule = ExponentialDecay(initial_learning_rate=learning_rate,decay_steps=20, decay_rate=0.5)
         #opt = Adam(learning_rate=lr_schedule, beta_1=beta_1, beta_2=beta_2, epsilon=epsilon, amsgrad=amsgrad)
@@ -142,6 +146,8 @@ class NNClassifier:
         if self.params["model"] == "CNN":
             self.model = NNClassifier.createModelCNN(**self.params)
         elif self.params["model"] == "FFNN":
+            self.params["vectorSpaceSize"]=len(trainX[0])
+            print(self.params["vectorSpaceSize"])
             self.model = NNClassifier.createModel1(**self.params)
         elif self.params["model"] == "LSTM":
             self.model = NNClassifier.createModel1LSTM(**self.params)
@@ -160,8 +166,8 @@ class NNClassifier:
             tbCallBack = keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1, write_graph=True, write_images=True)
             #lrschedule = StepDecay(initAlpha=self.params["learning_rate"], factor=0.5, dropEvery=20)
             #history = self.model.fit(trainX, trainY, batch_size=self.params["batch_size"], epochs=self.params["epochs"], validation_data=(devX, devY), verbose=2, callbacks=[callback, tbCallBack, LearningRateScheduler(lrschedule)])
-            history = self.model.fit(trainX, trainY, batch_size=self.params["batch_size"], epochs=self.params["epochs"], validation_data=(devX, devY), verbose=2, callbacks=[callback, tbCallBack])
-
+            history = self.model.fit(trainX, trainY, batch_size=self.params["batch_size"], epochs=self.params["epochs"], validation_data=(devX, devY), validation_steps=1, validation_batch_size=len(devX[0]),validation_freq=4, verbose=2, callbacks=[callback, tbCallBack],shuffle=True)
+           
             #plot_graphs(history, "accuracy")
             #plot_graphs(history, "loss")
             

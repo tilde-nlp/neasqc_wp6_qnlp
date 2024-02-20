@@ -48,15 +48,13 @@ To perform this step run the script *1_Filter6Parse.sh* passing the following pa
 
 Examples:
 
-`1_Filter6Parse.sh -i ./data/datasets/Reviews.csv -d ',' -c 'Score' -t 'Summary' -g '0'`
+`1_Filter6Parse.sh -i ./data/datasets/reviews.csv -i ./data/datasets/reviews_alltrees.tsv -d ',' -c 'Score' -t 'Summary' -g '0'`
 
-`1_Filter6Parse.sh -i ./data/datasets/train.csv -d ','  -g '1'`
+`1_Filter6Parse.sh -i ./data/datasets/ag_news_csv_train.csv -o ./data/datasets/ag_news_alltrees.tsv -d ','  -g '7'`
 
-`1_Filter6Parse.sh -i ./data/datasets/labelled_newscatcher_dataset.csv -d ';' -c 'topic' -t 'title' -g '-1'`
+`1_Filter6Parse.sh -i ./data/datasets/labelled_newscatcher_dataset.csv -o ./data/datasets/labelled_newscatcher_dataset_alltrees.tsv -d ';' -c 'topic' -t 'title' -g '-1'`
 
-Files with syntactic tags `Reviews_alltrees.tsv`, `labelled_newscatcher_dataset_alltrees.tsv`, `RAW_interactions_alltrees.tsv` are included in *../data/datasets* folder.
-
-The name of the dataset *train* in further steps is changed to *amazonreviews_train* for clarity.
+Files with syntactic tags `reviews_alltrees.tsv`, `labelled_newscatcher_dataset_alltrees.tsv`, `ag_news_alltrees.tsv` are included in *../data/datasets* folder.
 
 Examples with the sentence similarity datasets:
 
@@ -72,10 +70,15 @@ To perform this step run the script *2_FilterSyntacticTrees.sh* passing the foll
 
 - -i \<input file\>               TAB separated 3-column file to filter
 - -f \<syntactical trees file\>   File containing list of preferable syntactical tags. If this parameter is missing all tags with the structure  *s[...]* are selected.
+- -c \<classes to ignore\>		  Optionally classes to ignore in dataset separated by ','
 
 Example:
 
-`2_FilterSyntacticTrees.sh -i ./data/datasets/amazonreviews_train_alltrees.tsv -f ./data/datasets/validtrees.txt`
+`2_FilterSyntacticTrees.sh -i ./data/datasets/reviews_alltrees.tsv -c '2,4'`
+
+`2_FilterSyntacticTrees.sh -i ./data/datasets/labelled_newscatcher_dataset_alltrees.tsv -c 'SCIENCE'`
+
+`2_FilterSyntacticTrees.sh -i ./data/datasets/ag_news_alltrees.tsv`
 
 Example with the sentence similarity dataset:
 
@@ -96,21 +99,20 @@ To perform this step run the script *3_SplitTrainTestDev.sh* passing the followi
 
 Example:
 
-`3_SplitTrainTestDev.sh -i ./data/datasets/amazonreviews_train_filtered.tsv`
+`3_SplitTrainTestDev.sh -i ./data/datasets/reviews_filtered.tsv`
 
-`3_SplitTrainTestDev.sh -i ./data/datasets/paired_similarity_filtered.tsv`
+`3_SplitTrainTestDev.sh -i ./data/datasets/ag_news_filtered.tsv`
+
+`3_SplitTrainTestDev.sh -i ./data/datasets/labelled_newscatcher_dataset_filtered.tsv`
 
 ### Step 4 - Acquiring embedding vectors using chosen pre-trained embedding model.
 
-We have experimented with 5 different pre-trained embedding models.
+We have experimented with 2 different pre-trained embedding models.
 
 |   | Pre-trained model      | Embedding type | Vectors for unit | About model                                                                                                                                                                                        |
 |---|------------------------|----------------|------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|   | *cc.en.300.bin*        | fasttext       | word             | Model trained on Common Crawl and Wikipedia using fastText.<br><https://fasttext.cc/docs/en/crawl-vectors.html>                                                                                    |
-|   | *all-mpnet-base-v2*    | transformer    | sentence         | The best among the sentence transformers general purpose model trained on all available training data (more than 1 billion training pairs).<br><https://www.sbert.net/docs/pretrained_models.html> |
-|   | *all-distilroberta-v1* | transformer    | sentence         | The third best sentence transformers model, faster that *all-mpnet-base-v2*.<br><https://www.sbert.net/docs/pretrained_models.html>                                                                |
-|   | *bert-base-uncased*    | bert           | sentence, word   | Case insensitive model pretrained on BookCorpus (consisting of 11,038 unpublished books) and English Wikipedia.<br><https://huggingface.co/bert-base-uncased>                                      |
-|   | *bert-base-cased*      | bert           | sentence, word   | Model pretrained on BookCorpus (consisting of 11,038 unpublished books) and English Wikipedia.<br><https://huggingface.co/bert-base-cased>                                                         |
+|   | *ember-v1*             | transformer    | sentence         | 1024-dimentional sentence transformer model. <br><https://huggingface.co/llmrails/ember-v1>                                                                                                         |
+|   | *bert-base-uncased*    | bert           | sentence         | Case insensitive model pretrained on BookCorpus (consisting of 11,038 unpublished books) and English Wikipedia.<br><https://huggingface.co/bert-base-uncased>                                      |
 
 Bert models are older; and they are slower that sentence transformer models.
 
@@ -129,25 +131,43 @@ Embedding unit is 'word' or 'sentence' for the 'bert' models; 'word' for the 'fa
 
 Run this step for all 3 parts of the dataset - train, dev and test.
 
-Example:
+Examples:
 
-`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_train.tsv -c '3' -m 'all-distilroberta-v1' -t 'transformer' -e 'sentence' -g '0'`
+`4_GetEmbeddings.sh -i ./data/datasets/labelled_newscatcher_dataset_filtered_test.tsv -o ./data/datasets/labelled_newscatcher_dataset_filtered_test_ember.json -c '3' -m 'llmrails/ember-v1' -t 'transformer' -e 'sentence' -g '1'`
 
-`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_test.tsv -c '3' -m 'all-distilroberta-v1' -t 'transformer' -e 'sentence' -g '0'`
+`4_GetEmbeddings.sh -i ./data/datasets/labelled_newscatcher_dataset_filtered_dev.tsv -o ./data/datasets/labelled_newscatcher_dataset_filtered_dev_ember.json -c '3' -m 'llmrails/ember-v1' -t 'transformer' -e 'sentence' -g '1'`
 
-`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_dev.tsv -c '3' -m 'all-distilroberta-v1' -t 'transformer' -e 'sentence' -g '0'`
+`4_GetEmbeddings.sh -i ./data/datasets/labelled_newscatcher_dataset_filtered_train.tsv -o ./data/datasets/labelled_newscatcher_dataset_filtered_train_ember.json -c '3' -m 'llmrails/ember-v1' -t 'transformer' -e 'sentence' -g '1'`
 
-`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_train.tsv -c '3' -m 'cc.en.300.bin' -t 'fasttext' -e 'word'`
+`4_GetEmbeddings.sh -i ./data/datasets/reviews_filtered_test.tsv -o ./data/datasets/reviews_filtered_test_ember.json -c '3' -m 'llmrails/ember-v1' -t 'transformer' -e 'sentence' -g '1'`
 
-`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_test.tsv -c '3' -m 'cc.en.300.bin' -t 'fasttext' -e 'word'`
+`4_GetEmbeddings.sh -i ./data/datasets/reviews_filtered_dev.tsv -o ./data/datasets/reviews_filtered_dev_ember.json -c '3' -m 'llmrails/ember-v1' -t 'transformer' -e 'sentence' -g '1'``
 
-`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_dev.tsv -c '3' -m 'cc.en.300.bin' -t 'fasttext' -e 'word'`
+`4_GetEmbeddings.sh -i ./data/datasets/reviews_filtered_train.tsv -o ./data/datasets/reviews_filtered_train_ember.json -c '3' -m 'llmrails/ember-v1' -t 'transformer' -e 'sentence' -g '1'`
 
-`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_train.tsv -c '3' -m 'bert-base-uncased' -t 'bert' -e 'sentence' -g '0'`
+`4_GetEmbeddings.sh -i ./data/datasets/ag_news_filtered_test.tsv -o ./data/datasets/ag_news_filtered_test_ember.json -c '3' -m 'llmrails/ember-v1' -t 'transformer' -e 'sentence' -g '1'`
 
-`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_test.tsv -c '3' -m 'bert-base-uncased' -t 'bert' -e 'sentence' -g '0'`
+`4_GetEmbeddings.sh -i ./data/datasets/ag_news_filtered_dev.tsv -o ./data/datasets/ag_news_filtered_dev_ember.json -c '3' -m 'llmrails/ember-v1' -t 'transformer' -e 'sentence' -g '1'`
 
-`4_GetEmbeddings.sh -i ./data/datasets/amazonreview_train_filtered_dev.tsv -c '3' -m 'bert-base-uncased' -t 'bert' -e 'sentence' -g '0'`
+`4_GetEmbeddings.sh -i ./data/datasets/ag_news_filtered_train.tsv -o ./data/datasets/ag_news_filtered_train_ember.json -c '3' -m 'llmrails/ember-v1' -t 'transformer' -e 'sentence' -g '1'`
+
+`4_GetEmbeddings.sh -i ./data/datasets/labelled_newscatcher_dataset_filtered_test.tsv -o ./data/datasets/labelled_newscatcher_dataset_filtered_test_bert.json -c '3' -m 'bert-base-uncased' -t 'bert' -e 'sentence' -g '1'`
+
+`4_GetEmbeddings.sh -i ./data/datasets/labelled_newscatcher_dataset_filtered_dev.tsv -o ./data/datasets/labelled_newscatcher_dataset_filtered_dev_bert.json -c '3' -m 'bert-base-uncased' -t 'bert' -e 'sentence' -g '1'`
+
+`4_GetEmbeddings.sh -i ./data/datasets/labelled_newscatcher_dataset_filtered_train.tsv -o ./data/datasets/labelled_newscatcher_dataset_filtered_train_bert.json -c '3' -m 'bert-base-uncased' -t 'bert' -e 'sentence' -g '1'`
+
+`4_GetEmbeddings.sh -i ./data/datasets/reviews_filtered_test.tsv -o ./data/datasets/reviews_filtered_test_bert.json -c '3' -m 'bert-base-uncased' -t 'bert' -e 'sentence' -g '1'`
+
+`4_GetEmbeddings.sh -i ./data/datasets/reviews_filtered_dev.tsv -o ./data/datasets/reviews_filtered_dev_bert.json -c '3' -m 'bert-base-uncased' -t 'bert' -e 'sentence' -g '1'`
+
+`4_GetEmbeddings.sh -i ./data/datasets/reviews_filtered_train.tsv -o ./data/datasets/reviews_filtered_train_bert.json -c '3' -m 'bert-base-uncased' -t 'bert' -e 'sentence' -g '1'`
+
+`4_GetEmbeddings.sh -i ./data/datasets/ag_news_filtered_test.tsv -o ./data/datasets/ag_news_filtered_test_bert.json -c '3' -m 'bert-base-uncased' -t 'bert' -e 'sentence' -g '1'`
+
+`4_GetEmbeddings.sh -i ./data/datasets/ag_news_filtered_dev.tsv -o ./data/datasets/ag_news_filtered_dev_bert.json -c '3' -m 'bert-base-uncased' -t 'bert' -e 'sentence' -g '1'`
+
+`4_GetEmbeddings.sh -i ./data/datasets/ag_news_filtered_train.tsv -o ./data/datasets/ag_news_filtered_train_bert.json -c '3' -m 'bert-base-uncased' -t 'bert' -e 'sentence' -g '1'`
 
 
 ### Step 5 - Training model.
@@ -167,13 +187,19 @@ To perform this step for the classification task run the script *5_TrainNNModel.
 	
 Examples:
 
-`5_TrainNNModel.sh -t ./data/datasets/amazonreview_train_filtered_train_bert-base-cased.json -d ./data/datasets/amazonreview_train_filtered_dev_bert-base-cased.json -f 'class' -e 'sentence' -m ./models/classical/amazonreview_train_bert-cased -g '0'`
+`bash ./5_TrainNNModel.sh -t ./data/datasets/labelled_newscatcher_dataset_filtered_train_ember.json -d ./data/datasets/labelled_newscatcher_dataset_filtered_dev_ember.json -f 'class' -e 'sentence' -m ./models/classical/labelled_newscatcher_dataset_ember1 -g '-1'`
 
-`5_TrainNNModel.sh -t ./data/datasets/amazonreview_train_filtered_train_all-distilroberta-v1.json -d ./data/datasets/amazonreview_train_filtered_dev_all-distilroberta-v1.json -f 'class' -e 'sentence' -m ./models/classical/amazonreview_train_distilroberta -g '0'`
+`bash ./5_TrainNNModel.sh -t ./data/datasets/labelled_newscatcher_dataset_filtered_train_bert.json -d ./data/datasets/labelled_newscatcher_dataset_filtered_dev_bert.json -f 'class' -e 'sentence' -m ./models/classical/labelled_newscatcher_dataset_bert1 -g '-1'`
 
-`5_TrainNNModel.sh -t ./data/datasets/amazonreview_train_filtered_train_fasttext.json -d ./data/datasets/amazonreview_train_filtered_dev_fasttext.json -f 'class' -e 'word' -m ./models/classical/amazonreview_train_fasttext -g '0'`
+`bash ./5_TrainNNModel.sh -t ./data/datasets/reviews_filtered_train_ember.json -d ./data/datasets/reviews_filtered_dev_ember.json -f 'class' -e 'sentence' -m ./models/classical/reviews_ember1 -g '-1'`
 
-`5_TrainNNModel.sh -t ./data/datasets/amazonreview_train_filtered_train.tsv -d ./data/datasets/amazonreview_train_filtered_dev.tsv -f 'class' -e '-' -m ./models/classical/amazonreview_train -g '0'`
+`bash ./5_TrainNNModel.sh -t ./data/datasets/reviews_filtered_train_bert.json -d ./data/datasets/reviews_filtered_dev_bert.json -f 'class' -e 'sentence' -m ./models/classical/reviews_bert1 -g '-1'`
+
+`bash ./5_TrainNNModel.sh -t ./data/datasets/ag_news_filtered_train_ember.json -d ./data/datasets/ag_news_filtered_dev_ember.json -f 'class' -e 'sentence' -m ./models/classical/ag_news_ember1 -g '-1'`
+
+`bash ./5_TrainNNModel.sh -t ./data/datasets/ag_news_filtered_train_bert.json -d ./data/datasets/ag_news_filtered_dev_bert.json -f 'class' -e 'sentence' -m ./models/classical/ag_news_bert1 -g '-1'`
+
+
 
 To perform this step for the sentence similarity task run the script *5_TrainEmbeddings.sh* passing the following parameters:
 
@@ -204,13 +230,17 @@ For classification run the script *6_ClassifyWithNNModel.sh* passing the followi
 
 Examples for the classification task:
 
-`6_ClassifyWithNNModel.sh -i ./data/datasets/amazonreview_train_filtered_test_bert-base-uncased.json -o ./benchmarking/results/raw/amazonreview_train_bert-base-uncased.txt -e 'sentence' -m ./models/classical/amazonreview_train_bert-uncased -g '0'`
+`bash ./6_ClassifyWithNNModel.sh -i ./data/datasets/labelled_newscatcher_dataset_filtered_test_ember.json -o ./benchmarking/results/raw/labelled_newscatcher_dataset_ember1.txt -e 'sentence' -m ./models/classical/labelled_newscatcher_dataset_ember1 -g '-1'`
 
-`6_ClassifyWithNNModel.sh -i ./data/datasets/amazonreview_train_filtered_test_all-distilroberta-v1.json -o ./benchmarking/results/raw/amazonreview_train_distilroberta.txt -e 'sentence' -m ./models/classical/amazonreview_train_distilroberta -g '0'`
+`bash ./6_ClassifyWithNNModel.sh -i ./data/datasets/labelled_newscatcher_dataset_filtered_test_bert.json -o ./benchmarking/results/raw/labelled_newscatcher_dataset_bert1.txt -e 'sentence' -m ./models/classical/labelled_newscatcher_dataset_bert1 -g '-1'`
 
-`6_ClassifyWithNNModel.sh -i ./data/datasets/amazonreview_train_filtered_test_fasttext.json -o ./benchmarking/results/raw/amazonreview_train_fasttext.txt -e 'word' -m ./models/classical/amazonreview_train_fasttext -g '0'`
+`bash ./6_ClassifyWithNNModel.sh -i ./data/datasets/reviews_filtered_test_ember.json -o ./benchmarking/results/raw/reviews_ember1.txt -e 'sentence' -m ./models/classical/reviews_ember1 -g '-1'`
 
-`6_ClassifyWithNNModel.sh -i ./data/datasets/amazonreview_train_filtered_test.tsv -o ./benchmarking/results/raw/amazonreview_train.txt -e '-' -m ./models/classical/amazonreview_train -g '0'`
+`bash ./6_ClassifyWithNNModel.sh -i ./data/datasets/reviews_filtered_test_bert.json -o ./benchmarking/results/raw/reviews_bert1.txt -e 'sentence' -m ./models/classical/reviews_bert1 -g '-1'`
+
+`bash ./6_ClassifyWithNNModel.sh -i ./data/datasets/ag_news_filtered_test_ember.json -o ./benchmarking/results/raw/ag_news_ember1.txt -e 'sentence' -m ./models/classical/ag_news_ember1 -g '-1'`
+
+`bash ./6_ClassifyWithNNModel.sh -i ./data/datasets/ag_news_filtered_test_bert.json -o ./benchmarking/results/raw/ag_news_bert1.txt -e 'sentence' -m ./models/classical/ag_news_bert1 -g '-1'`
 
 For similarity detection run the script *6_DetectSimilarity.sh* passing the following parameters:
 
@@ -240,11 +270,17 @@ To perform this step run the script *7_EvaluateResults.sh* passing the following
 
 Example:
 
-`7_EvaluateResults.sh -e ./data/datasets/amazonreview_train_filtered_test.tsv -c ./benchmarking/results/raw/amazonreview_train_distilroberta.txt -o ./benchmarking/results/amazonreview_train_distilroberta_acc.txt`
+`bash ./7_EvaluateResults.sh -e ./data/datasets/labelled_newscatcher_dataset_filtered.tsv -c ./benchmarking/results/raw/labelled_newscatcher_dataset_ember1.txt -o ./benchmarking/results/labelled_newscatcher_dataset_ember1.txt`
 
-`7_EvaluateResults.sh -e ./data/datasets/paired_similarity_filtered_test.tsv -c ./benchmarking/results/raw/paired_similarity_labse.txt -o ./benchmarking/results/paired_similarity_labse_acc.txt`
+`bash ./7_EvaluateResults.sh -e ./data/datasets/labelled_newscatcher_dataset_filtered.tsv -c ./benchmarking/results/raw/labelled_newscatcher_dataset_bert1.txt -o ./benchmarking/results/labelled_newscatcher_dataset_bert1.txt`
 
-`7_EvaluateResults.sh -e ./data/datasets/paired_similarity_filtered_test.tsv -c ./benchmarking/results/raw/paired_similarity_fasttext.txt -o ./benchmarking/results/paired_similarity_fasttext_acc.txt`
+`bash ./7_EvaluateResults.sh -e ./data/datasets/reviews_filtered_test.tsv -c ./benchmarking/results/raw/reviews_ember1.txt -o ./benchmarking/results/reviews_ember1.txt`
+
+`bash ./7_EvaluateResults.sh -e ./data/datasets/reviews_filtered_test.tsv -c ./benchmarking/results/raw/reviews_bert1.txt -o ./benchmarking/results/reviews_bert1.txt`
+
+`bash ./7_EvaluateResults.sh -e ./data/datasets/ag_news_filtered_test.tsv -c ./benchmarking/results/raw/ag_news_ember1.txt -o ./benchmarking/results/ag_news_ember1.txt`
+
+`bash ./7_EvaluateResults.sh -e ./data/datasets/ag_news_filtered_test.tsv -c ./benchmarking/results/raw/ag_news_bert1.txt -o ./benchmarking/results/ag_news_bert1.txt`
 
 ## Results
 

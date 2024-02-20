@@ -25,7 +25,7 @@ def main():
         batch_size=32
         start_time= time.time()
         if len(traindata) > 10000:
-            batch_size=4096
+            batch_size=2048
         if args.etype == "word":
             maxLen = 6
             trainX, trainY = prepareXYWords(traindata, maxLen, args.field, idxdict)
@@ -77,8 +77,6 @@ def main():
 
         with open(args.modeldir+'/results.json', "w", encoding="utf-8") as f:
             json.dump(ds, f, ensure_ascii=False, indent=2)
-            
-        classifier.plot_model(args.modeldir+'/model_plot.png')
             
     except Exception as err:
         print(f"Unexpected {err=}")
