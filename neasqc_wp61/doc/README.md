@@ -168,6 +168,25 @@ Examples:
 
 `4_GetEmbeddings.sh -i ./data/datasets/ag_news_filtered_train.tsv -o ./data/datasets/ag_news_filtered_train_bert.json -c '3' -m 'bert-base-uncased' -t 'bert' -e 'sentence' -g '1'`
 
+### Step 4_5 - Reducing dimensions of embeddings.
+
+Embedding dimensions can be reused using Python script *reduce_emb_dim.py* in folder './data/data_processing'. It uses dimensionality reduction classes from the script *dim_reduction.py*. 
+
+Run the script the following parameters:
+
+- -i \<input file\> 	 JSON file with embeddings (acquired using script *4_GetEmbeddings.sh*)
+- -o \<output file\>     JSON file with reduced embeddings
+- -n \<number of dimensions\> Desired output dimension of the vectors
+- -a \<reduction algorithm\> Dimensionality reduction algorithms are 'PCA', 'ICA', 'TSVD', 'UMAP' or 'TSNE'
+
+Example:
+
+`python ./data/data_processing/reduce_emb_dim.py -i ./data/datasets/reviews_filtered_train_ember.json -o ./data/datasets/reviews_filtered_train_100ember.json -n 100 -a PCA`
+
+`python ./data/data_processing/reduce_emb_dim.py -i ./data/datasets/reviews_filtered_test_ember.json -o ./data/datasets/reviews_filtered_test_100ember.json -n 100 -a PCA`
+
+`python ./data/data_processing/reduce_emb_dim.py -i ./data/datasets/reviews_filtered_dev_ember.json -o ./data/datasets/reviews_filtered_dev_100ember.json -n 100 -a PCA`
+
 
 ### Step 5 - Training model.
 
@@ -291,8 +310,9 @@ The syntactical structure of the test examples starts with *s[*. The examples co
 
 |                                                                                                              | reviews<br>(train: 15972, dev: 1995, test: 1995)<br>3 classes            | ag_news<br>(train: 57412, dev: 7176, test: 7176)<br>4 classes            | labelled_newscatcher_dataset<br>(train: 43225, dev: 5397, test: 5397)<br>7 classes |
 |--------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|--------------------------------------------------------------------------|------------------------------------------------------------------------------------|
-| 1024-dimentional transformer sentence emb.: *ember-v1*<br>NN model type: Shallow feedforward neural network  | Train accuracy: 0.7958<br>Dev. accuracy: 0.7846<br>Test accuracy: 0.7607 | Train accuracy: 0.9086<br>Dev. accuracy: 0.8965<br>Test accuracy: 0.8900 | Train accuracy: 0.8227<br>Dev. accuracy: 0.8067<br>Test accuracy: 0.8037           |
 | 768-dimentional BERT sentence emb.: *bert-base-uncased*<br>NN model type: Shallow feedforward neural network | Train accuracy: 0.7066<br>Dev. accuracy: 0.7105<br>Test accuracy: 0.6749 | Train accuracy: 0.8407<br>Dev. accuracy: 0.8317<br>Test accuracy: 0.8265 | Train accuracy: 0.7639<br>Dev. accuracy: 0.7512<br>Test accuracy: 0.7532           |
+| 1024-dimentional transformer sentence emb.: *ember-v1*<br>NN model type: Shallow feedforward neural network  | Train accuracy: 0.7958<br>Dev. accuracy: 0.7846<br>Test accuracy: 0.7607 | Train accuracy: 0.9086<br>Dev. accuracy: 0.8965<br>Test accuracy: 0.8900 | Train accuracy: 0.8227<br>Dev. accuracy: 0.8067<br>Test accuracy: 0.8037           |
+| sentence emb. *ember-v1* reduced to 100 dim. with PCA<br>NN model type: Shallow feedforward neural network   | Train accuracy: 0.7767<br>Dev. accuracy: 0.7846<br>Test accuracy: 0.6587 |                                                                          |                                                                                    |
 
 
 ### Results for sentence similarity task
