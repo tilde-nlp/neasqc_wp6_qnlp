@@ -3,16 +3,18 @@
 echo 'This script gets embedding vectors for every sample in train and dev datasets using specified embedding model.'
 
 infile='-'
+outfile='-'
 embmodeltype='-'
 embname='-'
 column='0'
 gpu='-1'
 embtype='sentence'
  
-while getopts i:c:m:t:g:e: flag
+while getopts i:o:c:m:t:g:e: flag
 do
     case "${flag}" in
         i) infile=${OPTARG};;
+        o) outfile=${OPTARG};;
         c) column=${OPTARG};;
         m) embname=${OPTARG};;
         t) embmodeltype=${OPTARG};;
@@ -21,22 +23,14 @@ do
     esac
 done
 
-if [[ "$embmodeltype" == "fasttext" ]] 
-then
-	replace="_${embtype}.json"
-else
-	replace="_${embname}.json"
-fi
-
-outfile=${infile//.tsv/$replace}
-
-if [[ "$infile" == "-" ]] || [[ "$embmodeltype" == "-" ]] || [[ "$embname" == "-" ]]
+if [[ "$infile" == "-" ]] || [[ "$outfile" == "-" ]] || [[ "$embmodeltype" == "-" ]] || [[ "$embname" == "-" ]]
 then
 __usage="
 Usage: $(basename $0) [OPTIONS]
 
 Options:
   -i <input file>      input file with text examples
+  -o <output file>     output json file with embeddings
   -c <column>          '3' - if 3-column input file containing class, text and parse tree columns, '0' - if the whole line is a text example
   -m <embedding name>  Name of the embedding model
   -t <embedding model type>  Type of the embedding model - 'fasttext', 'transformer' or 'bert'

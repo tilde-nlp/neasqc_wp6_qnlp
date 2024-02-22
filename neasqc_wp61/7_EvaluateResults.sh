@@ -26,25 +26,21 @@ Options:
   -o <accuracy file>             File for calculated test accuracy.
 "
 	echo "$__usage"
-elif [ "$(wc -l < $efile)" -eq "$(wc -l < $cfile)" ]
-then
+else
 python3 -c '
 import sys, csv, numpy
 file1, file2, file3 = sys.argv[1:]
 with open(file1) as f1:
     expectedClass = [line.rstrip().split()[0] for line in f1]
-with open(file2) as f2:
-    predictedClass = [line.rstrip().split()[0] for line in f2]
+accuracies=[]
 with open(file3, "w", encoding="utf-8") as f3:
-	f3.write("Test accuracy: " + str(sum(x == y for x, y in zip(expectedClass, predictedClass))/len(predictedClass)))
-	arr=[]
-	for x, y in zip(expectedClass, predictedClass):
-		if x==y:
-			arr.append(1)
-	print(arr,file=f3)
-	print(len(arr))
-	print(len(arr)/len(predictedClass))
+	for i in range(30):
+		ioutfile=file2.replace(".txt",f"{i}.txt")
+		print(ioutfile)
+		with open(ioutfile, "r", encoding="utf-8") as f2:
+			predictedClass = [line.rstrip().split()[0] for line in f2]
+		accuracies.append(sum(x == y for x, y in zip(expectedClass, predictedClass))/len(predictedClass))
+		print(f"Test accuracy for run {i}: " + str(accuracies[-1]),file=f3)
+	print(f"Average test accuracy: " + str(sum(accuracies) / len(accuracies)),file=f3)
 ' $efile $cfile $ofile
-else
-	echo 'Different number of lines in files! Can not compare.'
 fi

@@ -33,5 +33,7 @@ Options:
 "
 	echo "$__usage"
 else
-	python ./data/data_processing/use_classifier.py -i "${infile}" -e "${etype}" -m "${modeldir}" -g "${gpu}" > $outfile
+	for i in {0..29}; do
+		python ./data/data_processing/use_classifier.py -i "${infile}" -e "${etype}" -m "${modeldir}${i}" -g "${gpu}" > ${outfile/.txt/$i.txt}
+	done
 fi

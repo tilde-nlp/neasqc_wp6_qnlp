@@ -8,10 +8,11 @@ classfield='-'
 txtfield='-'
 gpu='-1'
 
-while getopts i:d:c:t:g: flag
+while getopts i:o:d:c:t:g: flag
 do
     case "${flag}" in
         i) infile=${OPTARG};;
+        o) outfile=${OPTARG};;
         d) delimiter=${OPTARG};;
         c) classfield=${OPTARG};;
         t) txtfield=${OPTARG};;
@@ -19,10 +20,7 @@ do
     esac
 done
 
-replace="_alltrees.tsv"
-outfile=${infile/.csv/$replace}
-outfile=${infile/.txt/$replace}
-	
+
 if [[ "$infile" == "-" ]]
 then
 __usage="
@@ -30,6 +28,7 @@ Usage: $(basename $0) [OPTIONS]
 
 Options:
   -i <dataset>            Dataset file (with path)
+  -o <result>             Out file (with path)
   -d <delimiter>          Field delimiter symbol
   -c <class fiels>        Name of the class field (only if the first line in the file contains field names)
   -t <text field>         Name of the text field (only if the first line in the __usagefile contains field names)

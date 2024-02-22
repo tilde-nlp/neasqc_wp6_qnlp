@@ -18,6 +18,7 @@ from tensorflow.keras import regularizers
 from sklearn.preprocessing import LabelEncoder
 import argparse
 import matplotlib.pyplot as plt
+import random
 
 def ts():
     return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
@@ -86,10 +87,12 @@ class NNClassifier:
     @staticmethod
     def createModel1(vectorSpaceSize, nClasses, **kwargs):
         model = Sequential()
-        model.add(Dense(nClasses, input_dim=vectorSpaceSize, activation='softmax'))
-        #model.add(Dense(vectorSpaceSize, input_dim=vectorSpaceSize, activation="relu"))
+        #model.add(Dense(nClasses, input_dim=vectorSpaceSize, activation='softmax'))
+        model.add(Dense(16, input_dim=vectorSpaceSize, activation='relu',kernel_regularizer=regularizers.L1L2(l1=1e-5, l2=1e-4),
+            bias_regularizer=regularizers.L2(1e-4),
+            activity_regularizer=regularizers.L2(1e-5)))
         #model.add(Dropout(0.1))
-        #model.add(Dense(nClasses, activation='softmax'))    
+        model.add(Dense(nClasses, activation='softmax'))    
         return model
 
     @staticmethod
@@ -129,13 +132,17 @@ class NNClassifier:
     def createAdamOptimizer(learning_rate=0.001, beta_1=0.9, beta_2=0.999,
                             epsilon=1e-07, amsgrad=False, **kwargs):
                             
-        #lr_schedule = ExponentialDecay(initial_learning_rate=learning_rate,decay_steps=20, decay_rate=0.5)
-        #opt = Adam(learning_rate=lr_schedule, beta_1=beta_1, beta_2=beta_2, epsilon=epsilon, amsgrad=amsgrad)
         opt = Adam(learning_rate=learning_rate, beta_1=beta_1, beta_2=beta_2,
                     epsilon=epsilon, amsgrad=amsgrad)
         return opt
-
-
+        
+    @staticmethod
+    def shuffle(a, b, seed):
+       rand_state = np.random.RandomState(seed)
+       rand_state.shuffle(a)
+       rand_state.seed(seed)
+       rand_state.shuffle(b)
+   
     def train(self, trainX, trainY, devX=[], devY=[]):
         '''Trains the model.
         @param trainX: training data
@@ -153,28 +160,25 @@ class NNClassifier:
             self.model = NNClassifier.createModel1LSTM(**self.params)
         else:
             raise NotImplementedError(f"Unknown model type: {self.params['model']}")
+            
         optimizer = NNClassifier.createAdamOptimizer(**self.params)
-        self.model.compile(optimizer=optimizer,
-                loss='categorical_crossentropy',
-                metrics=['accuracy'])
+        self.model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
                 
         if len(devX) == 0: #without early stopping
             return self.model.fit(trainX, trainY, batch_size=self.params["batch_size"], epochs=self.params["epochs"], verbose=2,)
         else:
-            print("Training with early stopping.")       
-            callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=3)
-            tbCallBack = keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1, write_graph=True, write_images=True)
-            #lrschedule = StepDecay(initAlpha=self.params["learning_rate"], factor=0.5, dropEvery=20)
-            #history = self.model.fit(trainX, trainY, batch_size=self.params["batch_size"], epochs=self.params["epochs"], validation_data=(devX, devY), verbose=2, callbacks=[callback, tbCallBack, LearningRateScheduler(lrschedule)])
-            history = self.model.fit(trainX, trainY, batch_size=self.params["batch_size"], epochs=self.params["epochs"], validation_data=(devX, devY), validation_steps=1, validation_batch_size=len(devX[0]),validation_freq=4, verbose=2, callbacks=[callback, tbCallBack],shuffle=True)
-           
+            print("Training with early stopping.")  
+                        
+            callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', mode='min',patience=5,restore_best_weights=True)
+            lrschedule = StepDecay(initAlpha=self.params["learning_rate"], factor=0.5, dropEvery=10)
+            history = self.model.fit(trainX, trainY, batch_size=self.params["batch_size"], epochs=self.params["epochs"],
+                validation_data=(devX, devY), verbose=2,
+                callbacks=[callback,LearningRateScheduler(lrschedule)],shuffle=True)
+
             #plot_graphs(history, "accuracy")
             #plot_graphs(history, "loss")
-            
-            with open(os.path.join(log_dir, 'params.txt'), 'w', encoding='utf-8', buffering=1) as out:
-                out.write(self.model.to_json() + "\n\n")
-                self.model.summary(print_fn=lambda x: out.write(x + '\n'))
-                out.write("\n")
+            #_, acc = self.model.evaluate(devX, devY)
+            #print("Accuracy = ", (acc * 100.0), "%")
             
             return history
 
@@ -204,7 +208,9 @@ def plot_graphs(history, string):
     plt.xlabel("Epoch Count")
     plt.ylabel(string)
     plt.legend([string, 'val_'+string])
+    plt.savefig(f'{string}.png')
     plt.show()
+    plt.close()
   
 def loadData(file):
     dataset = []
@@ -239,6 +245,7 @@ def prepareXYSentence(data, classify_by_field="truth_value",idxdict={}):
     X = np.array(arrX)
     labelencoder = LabelEncoder()
     Y = tf.keras.utils.to_categorical(arrY, num_classes=len(idxdict))
+    
     return X, Y
 
 def prepareXSentence(data):

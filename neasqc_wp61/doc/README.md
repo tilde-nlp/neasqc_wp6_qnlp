@@ -14,8 +14,7 @@ We use the following datasets from the kaggle.com.
 
 - *Reviews.csv* from the <https://www.kaggle.com/datasets/snap/amazon-fine-food-reviews/versions/1>
 - *labelled_newscatcher_dataset.csv* from the <https://www.kaggle.com/datasets/kotartemiy/topic-labeled-news-dataset>
-- *RAW_interactions.csv* from the <https://www.kaggle.com/datasets/shuyangli94/food-com-recipes-and-user-interactions?select=RAW_interactions.csv>
-- *train.csv* <https://www.kaggle.com/datasets/kritanjalijain/amazon-reviews?select=train.csv>
+- *ag-news_train.csv* from the <https://www.kaggle.com/datasets/kk0105/ag-news>
 
 To retrive the datasets from the kaggle.com you first have to
 
@@ -141,7 +140,7 @@ Examples:
 
 `4_GetEmbeddings.sh -i ./data/datasets/reviews_filtered_test.tsv -o ./data/datasets/reviews_filtered_test_ember.json -c '3' -m 'llmrails/ember-v1' -t 'transformer' -e 'sentence' -g '1'`
 
-`4_GetEmbeddings.sh -i ./data/datasets/reviews_filtered_dev.tsv -o ./data/datasets/reviews_filtered_dev_ember.json -c '3' -m 'llmrails/ember-v1' -t 'transformer' -e 'sentence' -g '1'``
+`4_GetEmbeddings.sh -i ./data/datasets/reviews_filtered_dev.tsv -o ./data/datasets/reviews_filtered_dev_ember.json -c '3' -m 'llmrails/ember-v1' -t 'transformer' -e 'sentence' -g '1'`
 
 `4_GetEmbeddings.sh -i ./data/datasets/reviews_filtered_train.tsv -o ./data/datasets/reviews_filtered_train_ember.json -c '3' -m 'llmrails/ember-v1' -t 'transformer' -e 'sentence' -g '1'`
 
@@ -185,19 +184,21 @@ To perform this step for the classification task run the script *5_TrainNNModel.
 - -m \<model directory\> Directory where to save trained model
 - -g \<gpu use\>         Number of GPU to use (from 0 to available GPUs), -1 if use CPU (default is -1)
 	
+Each model is trained 30 times (runs).
+
 Examples:
 
-`bash ./5_TrainNNModel.sh -t ./data/datasets/labelled_newscatcher_dataset_filtered_train_ember.json -d ./data/datasets/labelled_newscatcher_dataset_filtered_dev_ember.json -f 'class' -e 'sentence' -m ./models/classical/labelled_newscatcher_dataset_ember1 -g '-1'`
+`bash ./5_TrainNNModel.sh -t ./data/datasets/labelled_newscatcher_dataset_filtered_train_ember.json -d ./data/datasets/labelled_newscatcher_dataset_filtered_dev_ember.json -f 'class' -e 'sentence' -m ./models/classical/labelled_newscatcher_dataset_ember -g '-1'`
 
-`bash ./5_TrainNNModel.sh -t ./data/datasets/labelled_newscatcher_dataset_filtered_train_bert.json -d ./data/datasets/labelled_newscatcher_dataset_filtered_dev_bert.json -f 'class' -e 'sentence' -m ./models/classical/labelled_newscatcher_dataset_bert1 -g '-1'`
+`bash ./5_TrainNNModel.sh -t ./data/datasets/labelled_newscatcher_dataset_filtered_train_bert.json -d ./data/datasets/labelled_newscatcher_dataset_filtered_dev_bert.json -f 'class' -e 'sentence' -m ./models/classical/labelled_newscatcher_dataset_bert -g '-1'`
 
-`bash ./5_TrainNNModel.sh -t ./data/datasets/reviews_filtered_train_ember.json -d ./data/datasets/reviews_filtered_dev_ember.json -f 'class' -e 'sentence' -m ./models/classical/reviews_ember1 -g '-1'`
+`bash ./5_TrainNNModel.sh -t ./data/datasets/reviews_filtered_train_ember.json -d ./data/datasets/reviews_filtered_dev_ember.json -f 'class' -e 'sentence' -m ./models/classical/reviews_ember -g '-1'`
 
-`bash ./5_TrainNNModel.sh -t ./data/datasets/reviews_filtered_train_bert.json -d ./data/datasets/reviews_filtered_dev_bert.json -f 'class' -e 'sentence' -m ./models/classical/reviews_bert1 -g '-1'`
+`bash ./5_TrainNNModel.sh -t ./data/datasets/reviews_filtered_train_bert.json -d ./data/datasets/reviews_filtered_dev_bert.json -f 'class' -e 'sentence' -m ./models/classical/reviews_bert -g '-1'`
 
-`bash ./5_TrainNNModel.sh -t ./data/datasets/ag_news_filtered_train_ember.json -d ./data/datasets/ag_news_filtered_dev_ember.json -f 'class' -e 'sentence' -m ./models/classical/ag_news_ember1 -g '-1'`
+`bash ./5_TrainNNModel.sh -t ./data/datasets/ag_news_filtered_train_ember.json -d ./data/datasets/ag_news_filtered_dev_ember.json -f 'class' -e 'sentence' -m ./models/classical/ag_news_ember -g '-1'`
 
-`bash ./5_TrainNNModel.sh -t ./data/datasets/ag_news_filtered_train_bert.json -d ./data/datasets/ag_news_filtered_dev_bert.json -f 'class' -e 'sentence' -m ./models/classical/ag_news_bert1 -g '-1'`
+`bash ./5_TrainNNModel.sh -t ./data/datasets/ag_news_filtered_train_bert.json -d ./data/datasets/ag_news_filtered_dev_bert.json -f 'class' -e 'sentence' -m ./models/classical/ag_news_bert -g '-1'`
 
 
 
@@ -228,19 +229,19 @@ For classification run the script *6_ClassifyWithNNModel.sh* passing the followi
 - -m \<model directory\> Directory of pre-tained classifier model
 - -g \<gpu use\>         Number of GPU to use (from 0 to available GPUs), -1 if use CPU (default is -1)
 
-Examples for the classification task:
+Examples for the classification task, classification is performed with each of 30 models (trained in 30 runs):
 
-`bash ./6_ClassifyWithNNModel.sh -i ./data/datasets/labelled_newscatcher_dataset_filtered_test_ember.json -o ./benchmarking/results/raw/labelled_newscatcher_dataset_ember1.txt -e 'sentence' -m ./models/classical/labelled_newscatcher_dataset_ember1 -g '-1'`
+`bash ./6_ClassifyWithNNModel.sh -i ./data/datasets/labelled_newscatcher_dataset_filtered_test_ember.json -o ./benchmarking/results/raw/labelled_newscatcher_dataset_ember.txt -e 'sentence' -m ./models/classical/labelled_newscatcher_dataset_ember -g '-1'`
 
-`bash ./6_ClassifyWithNNModel.sh -i ./data/datasets/labelled_newscatcher_dataset_filtered_test_bert.json -o ./benchmarking/results/raw/labelled_newscatcher_dataset_bert1.txt -e 'sentence' -m ./models/classical/labelled_newscatcher_dataset_bert1 -g '-1'`
+`bash ./6_ClassifyWithNNModel.sh -i ./data/datasets/labelled_newscatcher_dataset_filtered_test_bert.json -o ./benchmarking/results/raw/labelled_newscatcher_dataset_bert.txt -e 'sentence' -m ./models/classical/labelled_newscatcher_dataset_bert -g '-1'`
 
-`bash ./6_ClassifyWithNNModel.sh -i ./data/datasets/reviews_filtered_test_ember.json -o ./benchmarking/results/raw/reviews_ember1.txt -e 'sentence' -m ./models/classical/reviews_ember1 -g '-1'`
+`bash ./6_ClassifyWithNNModel.sh -i ./data/datasets/reviews_filtered_test_ember.json -o ./benchmarking/results/raw/reviews_ember.txt -e 'sentence' -m ./models/classical/reviews_ember -g '-1'`
 
-`bash ./6_ClassifyWithNNModel.sh -i ./data/datasets/reviews_filtered_test_bert.json -o ./benchmarking/results/raw/reviews_bert1.txt -e 'sentence' -m ./models/classical/reviews_bert1 -g '-1'`
+`bash ./6_ClassifyWithNNModel.sh -i ./data/datasets/reviews_filtered_test_bert.json -o ./benchmarking/results/raw/reviews_bert.txt -e 'sentence' -m ./models/classical/reviews_bert -g '-1'`
 
-`bash ./6_ClassifyWithNNModel.sh -i ./data/datasets/ag_news_filtered_test_ember.json -o ./benchmarking/results/raw/ag_news_ember1.txt -e 'sentence' -m ./models/classical/ag_news_ember1 -g '-1'`
+`bash ./6_ClassifyWithNNModel.sh -i ./data/datasets/ag_news_filtered_test_ember.json -o ./benchmarking/results/raw/ag_news_ember.txt -e 'sentence' -m ./models/classical/ag_news_ember -g '-1'`
 
-`bash ./6_ClassifyWithNNModel.sh -i ./data/datasets/ag_news_filtered_test_bert.json -o ./benchmarking/results/raw/ag_news_bert1.txt -e 'sentence' -m ./models/classical/ag_news_bert1 -g '-1'`
+`bash ./6_ClassifyWithNNModel.sh -i ./data/datasets/ag_news_filtered_test_bert.json -o ./benchmarking/results/raw/ag_news_bert.txt -e 'sentence' -m ./models/classical/ag_news_bert -g '-1'`
 
 For similarity detection run the script *6_DetectSimilarity.sh* passing the following parameters:
 
@@ -268,81 +269,30 @@ To perform this step run the script *7_EvaluateResults.sh* passing the following
 - -c \<classifier results file\> Results acquired using classifier.
 - -o \<accuracy file\>         File for calculated test accuracy
 
-Example:
+Evaluation examples, evaluation is performed for each set of results acquired with 30 models (trained in 30 runs):
 
-`bash ./7_EvaluateResults.sh -e ./data/datasets/labelled_newscatcher_dataset_filtered.tsv -c ./benchmarking/results/raw/labelled_newscatcher_dataset_ember1.txt -o ./benchmarking/results/labelled_newscatcher_dataset_ember1.txt`
+`bash ./7_EvaluateResults.sh -e ./data/datasets/labelled_newscatcher_dataset_filtered_test.tsv -c ./benchmarking/results/raw/labelled_newscatcher_dataset_ember.txt -o ./benchmarking/results/labelled_newscatcher_dataset_ember.txt`
 
-`bash ./7_EvaluateResults.sh -e ./data/datasets/labelled_newscatcher_dataset_filtered.tsv -c ./benchmarking/results/raw/labelled_newscatcher_dataset_bert1.txt -o ./benchmarking/results/labelled_newscatcher_dataset_bert1.txt`
+`bash ./7_EvaluateResults.sh -e ./data/datasets/labelled_newscatcher_dataset_filtered_test.tsv -c ./benchmarking/results/raw/labelled_newscatcher_dataset_bert.txt -o ./benchmarking/results/labelled_newscatcher_dataset_bert.txt`
 
-`bash ./7_EvaluateResults.sh -e ./data/datasets/reviews_filtered_test.tsv -c ./benchmarking/results/raw/reviews_ember1.txt -o ./benchmarking/results/reviews_ember1.txt`
+`bash ./7_EvaluateResults.sh -e ./data/datasets/reviews_filtered_test.tsv -c ./benchmarking/results/raw/reviews_ember.txt -o ./benchmarking/results/reviews_ember.txt`
 
-`bash ./7_EvaluateResults.sh -e ./data/datasets/reviews_filtered_test.tsv -c ./benchmarking/results/raw/reviews_bert1.txt -o ./benchmarking/results/reviews_bert1.txt`
+`bash ./7_EvaluateResults.sh -e ./data/datasets/reviews_filtered_test.tsv -c ./benchmarking/results/raw/reviews_bert.txt -o ./benchmarking/results/reviews_bert.txt`
 
-`bash ./7_EvaluateResults.sh -e ./data/datasets/ag_news_filtered_test.tsv -c ./benchmarking/results/raw/ag_news_ember1.txt -o ./benchmarking/results/ag_news_ember1.txt`
+`bash ./7_EvaluateResults.sh -e ./data/datasets/ag_news_filtered_test.tsv -c ./benchmarking/results/raw/ag_news_ember.txt -o ./benchmarking/results/ag_news_ember.txt`
 
-`bash ./7_EvaluateResults.sh -e ./data/datasets/ag_news_filtered_test.tsv -c ./benchmarking/results/raw/ag_news_bert1.txt -o ./benchmarking/results/ag_news_bert1.txt`
+`bash ./7_EvaluateResults.sh -e ./data/datasets/ag_news_filtered_test.tsv -c ./benchmarking/results/raw/ag_news_bert.txt -o ./benchmarking/results/ag_news_bert.txt`
 
 ## Results
 
-### Results for classification task (data with noun phrases)
-
-Test examples have the following syntactical structure:
-
-`n[(n/n)   n[(n/n)   n]]`
-
-`n[(n/n)   n[(n/n)   n[(n/n)   n]]]`
-
-`n[n[n[(n/n)   n]] (n\\n)[((n\\n)/n)   n[n[(n/n)   n]]]]`
-
-`n[(n/n)[((n/n)/(n/n))   (n/n)] n]`
-
-`n[n[n[(n/n)   n]] (n\\n)[((n\\n)/n)   n[(n/n)   n]]]`
-
-|                                                                                                                    | review.tsv<br>(train: 27001, test: 3001)<br>5 classes | labelled_newscatcher_dataset.tsv<br>(train: 160, test: 18)<br>8 classes | amazonreview_train.tsv<br>(train: 183918, test: 20436)<br>2 classes |
-|--------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------|-------------------------------------------------------------------------|---------------------------------------------------------------------|
-| fastText word emb.: *cc.en.300.bin*<br>NN model type: Convolutional network (max sentence length 6)                | Train accuracy: 0.8677<br>Test accuracy: 0.7223       | Train accuracy: 0.6111<br>Test accuracy: 0.9929                         | Train accuracy: 0.9106<br>Test accuracy: 0.8303                     |
-| Transformer sentence emb.: *all-mpnet-base-v2*<br>NN model type: Shallow feedforward neural network                | Train accuracy: 0.7531<br>Test accuracy: 0.7426       | Train accuracy: 0.9366<br>Test accuracy: 0.7222                         | Train accuracy: 0.8400<br>Test accuracy: 0.8344                     |
-| Transformer sentence emb.: *all-distilroberta-v1*<br>NN model type: Shallow feedforward neural network             | Train accuracy: 0.7465<br>Test accuracy: 0.7330       | Train accuracy: 0.9366<br>Test accuracy: 0.7777                         | Train accuracy: 0.8264<br>Test accuracy: 0.8231                     |
-| BERT sentence emb.: *bert-base-uncased*<br>NN model type: Shallow feedforward neural network                       | Train accuracy: 0.7385<br>Test accuracy: 0.7256       | Train accuracy: 0.9929<br>Test accuracy: 0.7777                         | Train accuracy: 0.8115<br>Test accuracy: 0.8073                     |
-| BERT sentence emb.: *bert-base-cased*<br>NN model type: Shallow feedforward neural network                         | Train accuracy: 0.7324<br>Test accuracy: 0.7163       | Train accuracy: 1.0000<br>Test accuracy: 0.7222                         | Train accuracy: 0.7810<br>Test accuracy: 0.7788                     |
-
 ### Results for classification task (data with sentences)
 
-Test examples have the following syntactical structure:
+The syntactical structure of the test examples starts with *s[*. The examples contain no more that 20 tokens. Accuracies are given as average value of 30 runs.
 
-`s[n[n] (s\\n)[((s\\n)/(s\\n))   (s\\n)]]`
-
-`s[n[(n/n)   n] (s\\n)[((s\\n)/(s\\n))   (s\\n)]]`
-
-`s[n[n[(n/n)   n]] (s\\n)]`
-
-`s[n   (s\\n)[((s\\n)/n)   n[(n/n)   n]]]`
-
-`s[n   (s\\n)[((s\\n)/n)   n[(n/n)   n[(n/n)   n]]]]`
-
-Dataset *labelled_newscatcher_dataset* has only 12 examples and *RAW_interactions* has only 77 examples after filtering. As the number of examples is too small models are not trained for these datasets.
-The train/test/dev sets are split using the random stratified method.
-
-|                                                                                                                    | reviews.tsv<br>(train: 1596, dev: 199, test: 199)<br>5 classes | amazonreview_train.tsv<br>(train: 16853, dev: 2107, test: 2107)<br>2 classes |
-|--------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------|------------------------------------------------------------------------------|
-| fastText word emb.: *cc.en.300.bin*<br>NN model type: Convolutional network (max sentence length 6)                | Train accuracy: 0.9411<br>Test accuracy: 0.6985                | Train accuracy: 0.9576<br>Test accuracy: 0.8330                              |
-| Transformer sentence emb.: *all-mpnet-base-v2*<br>NN model type: Shallow feedforward neural network                | Train accuracy: 0.7757<br>Test accuracy: 0.7387                | Train accuracy: 0.8746<br>Test accuracy: 0.8647                              |
-| Transformer sentence emb.: *all-distilroberta-v1*<br>NN model type: Shallow feedforward neural network             | Train accuracy: 0.7726<br>Test accuracy: 0.7186                | Train accuracy: 0.8590<br>Test accuracy: 0.8420                              |
-| BERT sentence emb.: *bert-base-uncased*<br>NN model type: Shallow feedforward neural network                       | Train accuracy: 0.8189<br>Test accuracy: 0.6533                | Train accuracy: 0.8353<br>Test accuracy: 0.8287                              |
-| BERT sentence emb.: *bert-base-cased*<br>NN model type: Shallow feedforward neural network                         | Train accuracy: 0.8020<br>Test accuracy: 0.6533                | Train accuracy: 0.8044<br>Test accuracy: 0.7902                              |
-| BERT word emb.: *bert-base-uncased*<br>NN model type: Convolutional network (max sentence length 6)                | Train accuracy: 0.8791<br>Test accuracy: 0.6683                | Train accuracy: 0.8838<br>Test accuracy: 0.8396                              |
-| BERT word emb.: *bert-base-cased*<br>NN model type: Convolutional network (max sentence length 6)                  | Train accuracy: 0.8847<br>Test accuracy: 0.5678                | Train accuracy: 0.8740<br>Test accuracy: 0.8187                              |
-
-
-Different split method. The words in the test/dev sets are also in the train set. Batch size 4096 for amazonreview_train, default (32) for the other data sets.
-
-|                                                                                                        | reviews.tsv<br>(train: 1864, dev: 66, test: 65)<br>5 classes | amazonreview_train.tsv<br>(train: 18961, dev: 1053, test: 1053)<br>2 classes | reduced_amazonreview_pre_alpha.tsv<br>(train: 3300, dev: 700, test: 700)<br>2 classes |
-|--------------------------------------------------------------------------------------------------------|--------------------------------------------------------------|------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|
-| fastText word emb.: *cc.en.300.bin*<br>NN model type: Convolutional network (max sentence length 6)    | Train accuracy: 0.9759<br>Test accuracy: 0.7538              | Train accuracy: 0.8924<br>Test accuracy: 0.9003                              | Train accuracy: 0.9813<br>Test accuracy: 0.8543                                       |
-| Transformer sentence emb.: *all-distilroberta-v1*<br>NN model type: Shallow feedforward neural network | Train accuracy: 0.7715<br>Test accuracy: 0.7846              | Train accuracy: 0.8334<br>Test accuracy: 0.8775                              | Train accuracy: 0.8833<br>Test accuracy: 0.8457                                       |
-| BERT sentence emb.: *bert-base-uncased*<br>NN model type: Shallow feedforward neural network           | Train accuracy: 0.8106<br>Test accuracy: 0.7846              | Train accuracy: 0.8153<br>Test accuracy: 0.8642                              | Train accuracy: 0.8464<br>Test accuracy: 0.8257                                       |
-| BERT word emb.: *bert-base-uncased*<br>NN model type: Convolutional network (max sentence length 6)    | Train accuracy: 0.8471<br>Test accuracy: 0.8000              | Train accuracy: 0.8404<br>Test accuracy: 0.8888                              | Train accuracy: 0.9103<br>Test accuracy: 0.8157                                       |
-| No pre-trained embeddings<br>NN model type: Bidirectional LSTM NN (max sentence length 6)              | Train accuracy: 0.8026<br>Test accuracy: 0.7538              | Train accuracy: 0.8850<br>Test accuracy: 0.9031                              | Train accuracy: 0.9536<br>Test accuracy: 0.8214                                       |
+|                                                                                                              | reviews<br>(train: 15972, dev: 1995, test: 1995)<br>3 classes            | ag_news<br>(train: 57412, dev: 7176, test: 7176)<br>4 classes            | labelled_newscatcher_dataset<br>(train: 43225, dev: 5397, test: 5397)<br>7 classes |
+|--------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|--------------------------------------------------------------------------|------------------------------------------------------------------------------------|
+| 1024-dimentional transformer sentence emb.: *ember-v1*<br>NN model type: Shallow feedforward neural network  | Train accuracy: 0.7958<br>Dev. accuracy: 0.7846<br>Test accuracy: 0.7607 | Train accuracy: 0.9086<br>Dev. accuracy: 0.8965<br>Test accuracy: 0.8900 | Train accuracy: 0.8227<br>Dev. accuracy: 0.8067<br>Test accuracy: 0.8037           |
+| 768-dimentional BERT sentence emb.: *bert-base-uncased*<br>NN model type: Shallow feedforward neural network | Train accuracy: 0.7066<br>Dev. accuracy: 0.7105<br>Test accuracy: 0.6749 | Train accuracy: 0.8407<br>Dev. accuracy: 0.8317<br>Test accuracy: 0.8265 | Train accuracy: 0.7639<br>Dev. accuracy: 0.7512<br>Test accuracy: 0.7532           |
 
 
 ### Results for sentence similarity task

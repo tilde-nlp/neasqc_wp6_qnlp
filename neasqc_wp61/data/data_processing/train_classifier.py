@@ -4,6 +4,7 @@ import sys
 import argparse
 import json
 import time
+import os
 sys.path.append("./models/classical/")
 from NNClassifier import (loadData, NNClassifier, prepareXYWords, prepareXYSentence, prepareClassValueDict, prepareXYWordsNoEmbedd, prepareTokenDict)
  
@@ -23,9 +24,9 @@ def main():
         devdata = loadData(args.devdata)
         idxdict = prepareClassValueDict(traindata, args.field)
         batch_size=32
-        start_time= time.time()
+        
         if len(traindata) > 10000:
-            batch_size=2048
+            batch_size=1024#512
         if args.etype == "word":
             maxLen = 6
             trainX, trainY = prepareXYWords(traindata, maxLen, args.field, idxdict)
@@ -48,34 +49,56 @@ def main():
         else:
             print("Invalid embedding type. it must be 'word' or 'sentence'.")
             sys.exit(0)
-	
-        history = classifier.train(trainX, trainY, devX, devY)
-        end_time= time.time()
-                        
-        nn_train_acc = history.history["accuracy"][-1]
-        print(f"Model train accuracy: {nn_train_acc}")
-        print(f"Saving model to {args.modeldir}")
-        classifier.save(args.modeldir)
-        inv_map = {v: k for k, v in idxdict.items()}
-        with open(args.modeldir+'/dict.json', 'w') as map_file:
-            map_file.write(json.dumps(inv_map))
-        if args.etype == "-":
-            with open(args.modeldir+'/tokdict.json', 'w') as tok_file:
-               tok_file.write(json.dumps(tokdict))
         
-        ds = {
-            "input_args": {"runs": 1,
-            "iterations": len(history.history["val_accuracy"])},
-            "best_val_acc": max(history.history["val_accuracy"]),
-            "best_run": 0,
-            "time": [end_time-start_time],
-            "train_acc": [history.history["accuracy"]],
-            "train_loss": [history.history["loss"]],
-            "val_acc": [history.history["val_accuracy"]],
-            "val_loss": [history.history["val_loss"]],
-            }
+        ds = {"input_args": {"runs": 30,"iterations": 100},
+                "best_val_acc": 0,
+                "best_run": 0,
+                "time": [],
+                "train_acc": [],
+                "train_loss": [],
+                "val_acc": [],
+                "val_loss": []}
+        
+        classifier.shuffle(devX, devY, 28345)
+        classifier.shuffle(trainX, trainY, 28345)
+            
+        for i in range(30):
+            print(f"Run number {i}")
+            start_time= time.time()
+            history = classifier.train(trainX, trainY, devX, devY)
+            end_time= time.time()
+                            
+            nn_train_acc = max(history.history["accuracy"])
+            
+            print(f"Model train accuracy: {nn_train_acc}")
+            print(f"Saving model to {args.modeldir}{i}")
+            
+            classifier.save(f"{args.modeldir}{i}")
+            
+            inv_map = {v: k for k, v in idxdict.items()}
+            with open(f"{args.modeldir}{i}/dict.json", 'w') as map_file:
+                map_file.write(json.dumps(inv_map))
 
-        with open(args.modeldir+'/results.json', "w", encoding="utf-8") as f:
+            if args.etype == "-":
+                with open(f"{args.modeldir}{i}/tokdict.json", 'w') as tok_file:
+                   tok_file.write(json.dumps(tokdict))
+            
+            ds["time"].append(end_time-start_time)
+            ds["train_acc"].append(history.history["accuracy"])
+            ds["train_loss"].append(history.history["loss"])
+            ds["val_acc"].append(history.history["val_accuracy"])
+            ds["val_loss"].append(history.history["val_loss"])
+            
+            if ds["best_val_acc"] < max(history.history["val_accuracy"]):
+                ds["best_val_acc"] = max(history.history["val_accuracy"])
+                ds["best_run"]=i
+            if len(history.history["val_accuracy"]) < ds["input_args"]["iterations"]:
+                ds["input_args"]["iterations"] = len(history.history["val_accuracy"])
+
+        if not os.path.exists(args.modeldir):
+            os.makedirs(args.modeldir)
+            
+        with open(f"{args.modeldir}/results.json", "w", encoding="utf-8") as f:
             json.dump(ds, f, ensure_ascii=False, indent=2)
             
     except Exception as err:
