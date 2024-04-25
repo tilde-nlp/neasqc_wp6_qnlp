@@ -32,6 +32,7 @@ def main():
     print(args)
     print(classfield+' and '+txtfield)
     with open(args.infile, encoding="utf8", newline='') as csvfile, open(args.outfile, "w", encoding="utf8") as tsvfile:
+        writer = csv.writer(tsvfile, delimiter='\t')
         if args.classfield != None: 
             news_reader = csv.DictReader(csvfile, delimiter=args.delimiter, quotechar='"')
         else:
@@ -39,7 +40,8 @@ def main():
         processed_summaries = set()
         norm_process_params = ["perl", "./data/data_processing/scripts/normalize-punctuation.perl","-b","-l", "en"]
         norm_process = subprocess.Popen(norm_process_params, stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)
-	
+        
+        
         for row in news_reader:
             score = row[classfield]
             if score == '0':
@@ -71,7 +73,7 @@ def main():
                 continue
             sent_type = ''
             processed_summaries.add(tok_summary)
-            print("{0}\t{1}".format(score, tok_summary),file=tsvfile)
+            writer.writerow([score, tok_summary])
         norm_process.kill()
 
 if __name__ == "__main__":
