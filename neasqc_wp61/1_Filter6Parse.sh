@@ -6,9 +6,8 @@ infile='-'
 delimiter=','
 classfield='-'
 txtfield='-'
-gpu='-1'
 
-while getopts i:o:d:c:t:g: flag
+while getopts i:o:d:c:t: flag
 do
     case "${flag}" in
         i) infile=${OPTARG};;
@@ -16,7 +15,6 @@ do
         d) delimiter=${OPTARG};;
         c) classfield=${OPTARG};;
         t) txtfield=${OPTARG};;
-        g) gpu=${OPTARG};;
     esac
 done
 
@@ -32,14 +30,13 @@ Options:
   -d <delimiter>          Field delimiter symbol
   -c <class fiels>        Name of the class field (only if the first line in the file contains field names)
   -t <text field>         Name of the text field (only if the first line in the __usagefile contains field names)
-  -g <use gpu>		   Number of GPU to use (from 0 to available GPUs), -1 if use CPU (dfault is -1)
 "
 	echo "$__usage"
 else
 	if [[ "$classfield" == "-" ]]
 	then
-		python ./data/data_processing/filter-with-spacy-preprocessing.py -i "${infile}" -o "${outfile}" -d "${delimiter}" -g "${gpu}"
+		python ./data/data_processing/filter-with-spacy-preprocessing.py -i "${infile}" -o "${outfile}" -d "${delimiter}"
 	else
-		python ./data/data_processing/filter-with-spacy-preprocessing.py -i "${infile}" -o "${outfile}" -d "${delimiter}" -c "${classfield}" -t "${txtfield}" -g "${gpu}"
+		python ./data/data_processing/filter-with-spacy-preprocessing.py -i "${infile}" -o "${outfile}" -d "${delimiter}" -c "${classfield}" -t "${txtfield}"
 	fi
 fi
